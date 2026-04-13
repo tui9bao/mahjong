@@ -126,7 +126,7 @@
     <script>
         const API_URL = "https://script.google.com/macros/s/AKfycbwfmOefMUBiVjT5WYPNqEjcj3V92SQS1MlMAp60mvxCYPXa6wMrlJdTOs9geGy8Mc-5JA/exec";
         const MY_NAME = "yanyi"; 
-        const EMOJI_LIST = ["🦊","🐯","🦁","🐱","🐶","🐨","🐼","🐰","🐸","🐷","😊","😎","🤣","🤪","👻","🤡","👑","🔥","✨","🚀","💰","💎","🎲","🀄","🍀","⭐️","🌈","🍕","🍣","🍔","🌮","🍦","🍩","🍺","☕️","🍹","🥤","🍗","🥑","🥊"];
+        const EMOJI_LIST = ["🦊","🐯","🦁","🐱","🐶","🐨","🐼","🐰","🐸","🐷","😊","😎","🤣","🤪","👻","🤡","👑","🔥","✨","🚀","💰","💎","🎲","🀄","🍀","⭐️","🌈","🍕","🍣","🍔","🌮","🍦","🍩","啤酒","☕️","🍹","🥤","🍗","🥑","🥊"];
         
         let games = [];
         let playerEmojis = JSON.parse(localStorage.getItem('playerEmojis')) || { "yanyi": "🦊", "Yanyi": "🦊" };
@@ -169,10 +169,8 @@
                 </div>`).join('');
         }
 
-        // --- 🔮 核心優化：玄學分析邏輯 ---
         function renderMeTab() {
             const year = document.getElementById('meYearSel').value;
-            // 篩選包含 yanyi 的對局
             const myAllData = games.filter(g => (year === 'All' || (g.date && g.date.includes(year))) && g.players && (g.players[MY_NAME] !== undefined || g.players["Yanyi"] !== undefined));
             
             let totalProfit = 0, locStats = {}, typeStats = {}, luckMap = {};
@@ -184,9 +182,7 @@
                 locStats[g.location] = (locStats[g.location] || 0) + score;
                 typeStats[type] = (typeStats[type] || 0) + score;
                 
-                // 重點：計算「當某人與 yanyi 同場時，yanyi 的表現」
                 Object.keys(g.players).forEach(p => {
-                    // 排除 yanyi 自己
                     if (p.toLowerCase() !== MY_NAME.toLowerCase()) {
                         luckMap[p] = (luckMap[p] || 0) + score;
                     }
@@ -203,9 +199,7 @@
                     <div class="text-2xl font-black text-slate-800">${myAllData.length}</div>
                 </div>`;
 
-            // 排序：分數越高越旺 yanyi，分數越低越剋 yanyi
             const sortedLuck = Object.entries(luckMap).sort((a,b) => b[1] - a[1]);
-            
             const luckHTML = (list) => list.map(([n, v]) => `
                 <div class="flex justify-between items-center">
                     <span class="text-xs font-bold text-slate-700">${getPlayerEmoji(n)} ${n}</span>
@@ -215,7 +209,6 @@
             document.getElementById('luckBest').innerHTML = luckHTML(sortedLuck.slice(0, 2));
             document.getElementById('luckWorst').innerHTML = luckHTML(sortedLuck.slice(-2).reverse());
 
-            // 牌型與地點明細
             document.getElementById('meTypes').innerHTML = Object.entries(typeStats).map(([t, v]) => `
                 <div class="card p-4">
                     <p class="text-[9px] font-bold text-slate-400 uppercase mb-1">🀄 ${t}</p>
@@ -229,7 +222,6 @@
                 </div>`).join('');
         }
 
-        // --- 其他輔助邏輯保持不變 ---
         function renderAll() {
             const year = document.getElementById('yearSel').value;
             const homeFiltered = games.filter(g => (year === 'All' || (g.date && g.date.includes(year))) && g.location === "yanyi home");
@@ -243,27 +235,65 @@
         function renderFriends() {
             let s = {};
             const homeGames = games.filter(g => g.location === "yanyi home");
+            
             homeGames.forEach(g => {
                 if(!g.players) return;
+                
+                // 排除 2024 年累計數據
+                const is2024 = g.date && g.date.includes("2024");
+                
                 Object.entries(g.players).forEach(([n, v]) => {
-                    if(!s[n]) s[n] = { t:0, w:0, c:0 };
-                    s[n].t += v; s[n].c++; if(v>0) s[n].w++;
+                    if(!s[n]) s[n] = { t:0, w:0, c:0, max: -Infinity };
+                    
+                    s[n].t += v; 
+                    s[n].c++;    
+                    if(v > 0) s[n].w++; 
+                    
+                    // 最高得分邏輯：排除 2024
+                    if(!is2024 && v > s[n].max) {
+                        s[n].max = v;
+                    }
                 });
             });
+
             const sorted = Object.entries(s).sort((a,b) => b[1].c - a[1].c);
+            
             document.getElementById('friendsGrid').innerHTML = sorted.map(([n, v]) => {
+                const winRate = ((v.w / v.c) * 100).toFixed(0);
+                const avgScore = (v.t / v.c).toFixed(1);
+                const displayMax = (v.max === -Infinity) ? "--" : (v.max > 0 ? `+${v.max}` : v.max);
+                
                 let rarity = "路人級", rarityClass = "bg-slate-100 text-slate-500";
                 if (v.c >= 20) { rarity = "傳說級"; rarityClass = "bg-amber-100 text-amber-600 ring-1 ring-amber-200"; }
                 else if (v.c >= 10) { rarity = "常駐級"; rarityClass = "bg-indigo-100 text-indigo-600 ring-1 ring-indigo-200"; }
                 else if (v.c >= 3) { rarity = "稀有級"; rarityClass = "bg-emerald-100 text-emerald-600 ring-1 ring-emerald-200"; }
+                
                 return `
                 <div class="card p-6 relative">
                     <div class="absolute top-4 right-4 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter ${rarityClass}">${rarity}</div>
+                    
                     <div class="flex items-center gap-5 mb-6">
-                        <div onclick="openEmojiPickerForPlayer('${n}')" class="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center text-4xl shadow-sm cursor-pointer active:scale-90 transition-transform">${getPlayerEmoji(n)}</div>
+                        <div onclick="openEmojiPickerForPlayer('${n}')" class="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center text-4xl shadow-sm cursor-pointer active:scale-90 transition-transform">
+                            ${getPlayerEmoji(n)}
+                        </div>
                         <div>
                             <h3 class="text-xl font-black text-slate-800">${n}</h3>
-                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">出席次數: ${v.c}</p>
+                            <p class="text-[10px] font-black text-indigo-500 uppercase tracking-widest mt-1">場均: ${avgScore > 0 ? '+' : ''}${avgScore}</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-2 border-t border-slate-50 pt-5">
+                        <div class="text-center">
+                            <p class="text-[9px] text-slate-400 font-black uppercase mb-1">勝率</p>
+                            <p class="text-sm font-black text-slate-700 font-mono">${winRate}%</p>
+                        </div>
+                        <div class="text-center border-x border-slate-50 px-2">
+                            <p class="text-[9px] text-slate-400 font-black uppercase mb-1">最高得分</p>
+                            <p class="text-sm font-black text-emerald-500 font-mono">${displayMax}</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-[9px] text-slate-400 font-black uppercase mb-1">總出席</p>
+                            <p class="text-sm font-black text-slate-700 font-mono">${v.c}</p>
                         </div>
                     </div>
                 </div>`;
