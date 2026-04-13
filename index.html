@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>麻雀龍虎榜之雀王爭霸</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; -webkit-tap-highlight-color: transparent; padding-bottom: 100px; }
+        .safe-top { padding-top: env(safe-area-inset-top); }
+        .tab-active { color: #4f46e5; border-bottom: 3px solid #4f46e5; }
+        .profit { color: #10b981; font-weight: 800; }
+        .loss { color: #ef4444; font-weight: 800; }
+        .card { background: white; border-radius: 24px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05); }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        input, select { font-size: 16px !important; }
+        #emojiGrid { max-height: 350px; overflow-y: auto; }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="safe-top">
+
+    <div class="max-w-md mx-auto px-5 pt-8">
+        <header class="flex justify-between items-start mb-6">
+            <div>
+                <h1 class="text-2xl font-black text-slate-800 tracking-tight">🀄 麻雀龍虎榜之雀王爭霸</h1>
+                <p id="statusText" class="text-slate-400 text-[10px] font-bold uppercase tracking-widest mt-1">連線中...</p>
+            </div>
+            <button onclick="toggleInput()" class="bg-indigo-600 text-white w-12 h-12 rounded-2xl shadow-xl shadow-indigo-100 flex items-center justify-center active:scale-90 transition-transform">
+                <i class="fa-solid fa-plus text-xl"></i>
+            </button>
+        </header>
+
+        <div class="flex space-x-6 mb-6 border-b border-slate-100 overflow-x-auto no-scrollbar whitespace-nowrap">
+            <button onclick="switchTab('rank')" id="btn-rank" class="pb-3 text-sm font-bold tab-active">龍虎榜</button>
+            <button onclick="switchTab('friends')" id="btn-friends" class="pb-3 text-sm font-bold text-slate-400">名人堂</button>
+            <button onclick="switchTab('me')" id="btn-me" class="pb-3 text-sm font-bold text-slate-400">個人戰績</button>
+            <button onclick="switchTab('history')" id="btn-history" class="pb-3 text-sm font-bold text-slate-400">流水帳</button>
+        </div>
+
+        <div id="content-rank" class="space-y-4">
+            <div class="flex justify-between items-center px-1">
+                <h2 class="font-bold text-slate-700">🏆 年度排名 (主場限定)</h2>
+                <select id="yearSel" onchange="renderAll()" class="bg-white px-3 py-1 rounded-full text-xs font-bold text-indigo-600 border-none shadow-sm outline-none">
+                    <option value="2026">2026</option><option value="2025">2025</option><option value="2024">2024</option><option value="All">所有年份</option>
+                </select>
+            </div>
+            <div class="card overflow-hidden"><div id="rankBody" class="divide-y divide-slate-50"></div></div>
+        </div>
+
+        <div id="content-friends" class="hidden space-y-4">
+            <h2 class="font-bold text-slate-700 px-1">🏠 調景嶺雀館名人堂</h2>
+            <div id="friendsGrid" class="grid grid-cols-1 gap-4"></div>
+        </div>
+
+        <div id="content-me" class="hidden animate-in fade-in duration-300">
+            <div class="flex justify-between items-center mb-4 px-1">
+                <h2 class="font-bold text-slate-700">👤 yanyi 戰績分析</h2>
+                <select id="meYearSel" onchange="renderMeTab()" class="bg-white px-3 py-1 rounded-full text-xs font-bold text-indigo-600 border-none shadow-sm outline-none">
+                    <option value="2026">2026</option><option value="2025">2025</option><option value="2024">2024</option><option value="All" selected>所有年份</option>
+                </select>
+            </div>
+            <div class="grid grid-cols-2 gap-4 mb-6" id="meSummary"></div>
+            
+            <h3 class="font-bold text-slate-700 mb-3 px-1">🔮 牌局玄學 (誰在場我最旺？)</h3>
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <div class="card p-5 bg-emerald-50 border border-emerald-100">
+                    <p class="text-[10px] font-black text-emerald-600 uppercase mb-2">✨ 旺我 (貴人)</p>
+                    <div id="luckBest" class="space-y-2"></div>
+                </div>
+                <div class="card p-5 bg-rose-50 border border-rose-100">
+                    <p class="text-[10px] font-black text-rose-600 uppercase mb-2">💀 剋我 (天敵)</p>
+                    <div id="luckWorst" class="space-y-2"></div>
+                </div>
+            </div>
+
+            <h3 class="font-bold text-slate-700 mb-3 px-1">🀄 各牌型盈虧</h3>
+            <div id="meTypes" class="grid grid-cols-2 gap-3 mb-6"></div>
+
+            <h3 class="font-bold text-slate-700 mb-3 px-1">📍 各地盈虧</h3>
+            <div id="meLocs" class="space-y-3"></div>
+        </div>
+
+        <div id="content-history" class="hidden space-y-4">
+            <div class="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
+                <select id="filtPlayer" onchange="renderHistory()" class="bg-white px-4 py-2 rounded-xl text-xs font-bold shadow-sm shrink-0 border-none"></select>
+                <select id="filtLoc" onchange="renderHistory()" class="bg-white px-4 py-2 rounded-xl text-xs font-bold shadow-sm shrink-0 border-none"></select>
+            </div>
+            <div id="playerStatsCard" class="hidden"></div>
+            <div id="historyList" class="space-y-3"></div>
+        </div>
+    </div>
+
+    <div id="inputForm" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 hidden flex items-end">
+        <div class="bg-white w-full rounded-t-[40px] p-8 pb-12 shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div class="w-12 h-1.5 bg-slate-200 mx-auto mb-8 rounded-full"></div>
+            <h3 class="font-black text-2xl mb-8 text-center text-slate-800">新對局紀錄</h3>
+            <div class="space-y-4 mb-8">
+                <div class="grid grid-cols-2 gap-4">
+                    <input type="date" id="gDate" class="bg-slate-50 border-none p-4 rounded-2xl w-full font-bold outline-none">
+                    <select id="gType" class="bg-slate-50 border-none p-4 rounded-2xl w-full font-bold outline-none">
+                        <option value="廣東牌">廣東牌</option><option value="跑馬仔">跑馬仔</option><option value="台灣牌">台灣牌</option>
+                    </select>
+                </div>
+                <input type="text" id="gLoc" placeholder="地點" list="locs" value="yanyi home" class="bg-slate-50 border-none p-4 rounded-2xl w-full font-bold outline-none">
+                <div class="grid grid-cols-2 gap-4" id="pContainer"></div>
+            </div>
+            <div class="flex gap-4">
+                <button onclick="toggleInput()" class="flex-1 py-5 font-bold text-slate-400">取消</button>
+                <button id="saveBtn" onclick="saveGame()" class="flex-[2] py-5 bg-indigo-600 text-white rounded-2xl font-black shadow-lg">確認儲存</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="emojiPicker" class="fixed inset-0 bg-black/60 hidden flex items-center justify-center z-[60] backdrop-blur-sm px-6">
+        <div class="bg-white p-6 rounded-[40px] w-full max-w-sm">
+            <h4 class="text-center font-bold text-slate-400 text-xs mb-4 uppercase tracking-widest">選擇頭像</h4>
+            <div class="grid grid-cols-5 gap-3 no-scrollbar" id="emojiGrid"></div>
+            <button onclick="closeEmojiPicker()" class="w-full mt-6 bg-slate-100 py-4 rounded-2xl text-slate-500 font-bold">返回</button>
+        </div>
+    </div>
+
+    <datalist id="locs"><option value="yanyi home"><option value="onon home"><option value="Clubhouse"></datalist>
+    <datalist id="allPlayersList"></datalist>
+
+    <script>
+        const API_URL = "https://script.google.com/macros/s/AKfycbwfmOefMUBiVjT5WYPNqEjcj3V92SQS1MlMAp60mvxCYPXa6wMrlJdTOs9geGy8Mc-5JA/exec";
+        const MY_NAME = "yanyi"; 
+        const EMOJI_LIST = ["🦊","🐯","🦁","🐱","🐶","🐨","🐼","🐰","🐸","🐷","😊","😎","🤣","🤪","👻","🤡","👑","🔥","✨","🚀","💰","💎","🎲","🀄","🍀","⭐️","🌈","🍕","🍣","🍔","🌮","🍦","🍩","🍺","☕️","🍹","🥤","🍗","🥑","🥊"];
+        
+        let games = [];
+        let playerEmojis = JSON.parse(localStorage.getItem('playerEmojis')) || { "yanyi": "🦊", "Yanyi": "🦊" };
+        let currentTargetInputIdx = null;
+        let currentEditingPlayer = null;
+
+        async function fetchGames() {
+            document.getElementById('statusText').innerText = "☁️ 數據同步中...";
+            try {
+                const response = await fetch(API_URL);
+                const data = await response.json();
+                games = data.reverse(); 
+                document.getElementById('statusText').innerText = "✅ 數據已更新";
+                renderAll();
+            } catch (e) { document.getElementById('statusText').innerText = "❌ 連線失敗"; }
+        }
+
+        function getPlayerEmoji(name) { return playerEmojis[name] || "👤"; }
+
+        function renderRank(data) {
+            let s = {};
+            data.forEach(g => {
+                if(!g.players) return;
+                Object.entries(g.players).forEach(([n, v]) => {
+                    if(!s[n]) s[n] = { t:0, w:0, c:0 };
+                    s[n].t += v; s[n].c++; if(v>0) s[n].w++;
+                });
+            });
+            const sorted = Object.entries(s).sort((a,b) => b[1].t - a[1].t);
+            document.getElementById('rankBody').innerHTML = sorted.map(([n, v]) => `
+                <div class="flex justify-between items-center p-5">
+                    <div class="flex items-center gap-4">
+                        <span class="text-3xl">${getPlayerEmoji(n)}</span>
+                        <div class="flex flex-col">
+                            <span class="font-bold text-slate-800 text-base">${n}</span>
+                            <span class="text-[10px] text-slate-400 font-black uppercase tracking-widest">${v.c} 場 • 勝率 ${((v.w/v.c)*100).toFixed(0)}%</span>
+                        </div>
+                    </div>
+                    <span class="font-black font-mono text-xl ${v.t>=0?'profit':'loss'}">${v.t > 0 ? '+' : ''}${v.t}</span>
+                </div>`).join('');
+        }
+
+        // --- 🔮 核心優化：玄學分析邏輯 ---
+        function renderMeTab() {
+            const year = document.getElementById('meYearSel').value;
+            // 篩選包含 yanyi 的對局
+            const myAllData = games.filter(g => (year === 'All' || (g.date && g.date.includes(year))) && g.players && (g.players[MY_NAME] !== undefined || g.players["Yanyi"] !== undefined));
+            
+            let totalProfit = 0, locStats = {}, typeStats = {}, luckMap = {};
+            
+            myAllData.forEach(g => {
+                const score = g.players[MY_NAME] !== undefined ? g.players[MY_NAME] : g.players["Yanyi"];
+                const type = g.type || "廣東牌";
+                totalProfit += score;
+                locStats[g.location] = (locStats[g.location] || 0) + score;
+                typeStats[type] = (typeStats[type] || 0) + score;
+                
+                // 重點：計算「當某人與 yanyi 同場時，yanyi 的表現」
+                Object.keys(g.players).forEach(p => {
+                    // 排除 yanyi 自己
+                    if (p.toLowerCase() !== MY_NAME.toLowerCase()) {
+                        luckMap[p] = (luckMap[p] || 0) + score;
+                    }
+                });
+            });
+
+            document.getElementById('meSummary').innerHTML = `
+                <div class="card p-6 text-center bg-indigo-600 text-white shadow-lg">
+                    <div class="text-[10px] font-bold opacity-70 mb-1 uppercase tracking-widest">總盈虧</div>
+                    <div class="text-2xl font-black font-mono">${totalProfit>=0?'+':''}${totalProfit}</div>
+                </div>
+                <div class="card p-6 text-center">
+                    <div class="text-[10px] font-bold text-slate-400 mb-1 uppercase tracking-widest">總場數</div>
+                    <div class="text-2xl font-black text-slate-800">${myAllData.length}</div>
+                </div>`;
+
+            // 排序：分數越高越旺 yanyi，分數越低越剋 yanyi
+            const sortedLuck = Object.entries(luckMap).sort((a,b) => b[1] - a[1]);
+            
+            const luckHTML = (list) => list.map(([n, v]) => `
+                <div class="flex justify-between items-center">
+                    <span class="text-xs font-bold text-slate-700">${getPlayerEmoji(n)} ${n}</span>
+                    <span class="text-xs font-black font-mono ${v>=0?'text-emerald-500':'text-rose-500'}">${v>0?'+':''}${v}</span>
+                </div>`).join('') || '<p class="text-[10px] text-slate-300">暫無數據</p>';
+
+            document.getElementById('luckBest').innerHTML = luckHTML(sortedLuck.slice(0, 2));
+            document.getElementById('luckWorst').innerHTML = luckHTML(sortedLuck.slice(-2).reverse());
+
+            // 牌型與地點明細
+            document.getElementById('meTypes').innerHTML = Object.entries(typeStats).map(([t, v]) => `
+                <div class="card p-4">
+                    <p class="text-[9px] font-bold text-slate-400 uppercase mb-1">🀄 ${t}</p>
+                    <p class="text-base font-black font-mono ${v>=0?'profit':'loss'}">${v>0?'+':''}${v}</p>
+                </div>`).join('');
+
+            document.getElementById('meLocs').innerHTML = Object.entries(locStats).map(([l, v]) => `
+                <div class="card p-5 flex justify-between items-center">
+                    <span class="text-slate-600 font-bold">📍 ${l}</span>
+                    <span class="font-black font-mono text-lg ${v>=0?'profit':'loss'}">${v>0?'+':''}${v}</span>
+                </div>`).join('');
+        }
+
+        // --- 其他輔助邏輯保持不變 ---
+        function renderAll() {
+            const year = document.getElementById('yearSel').value;
+            const homeFiltered = games.filter(g => (year === 'All' || (g.date && g.date.includes(year))) && g.location === "yanyi home");
+            renderRank(homeFiltered);
+            renderFriends(); 
+            renderMeTab();
+            populateFilters();
+            renderHistory();
+        }
+
+        function renderFriends() {
+            let s = {};
+            const homeGames = games.filter(g => g.location === "yanyi home");
+            homeGames.forEach(g => {
+                if(!g.players) return;
+                Object.entries(g.players).forEach(([n, v]) => {
+                    if(!s[n]) s[n] = { t:0, w:0, c:0 };
+                    s[n].t += v; s[n].c++; if(v>0) s[n].w++;
+                });
+            });
+            const sorted = Object.entries(s).sort((a,b) => b[1].c - a[1].c);
+            document.getElementById('friendsGrid').innerHTML = sorted.map(([n, v]) => {
+                let rarity = "路人級", rarityClass = "bg-slate-100 text-slate-500";
+                if (v.c >= 20) { rarity = "傳說級"; rarityClass = "bg-amber-100 text-amber-600 ring-1 ring-amber-200"; }
+                else if (v.c >= 10) { rarity = "常駐級"; rarityClass = "bg-indigo-100 text-indigo-600 ring-1 ring-indigo-200"; }
+                else if (v.c >= 3) { rarity = "稀有級"; rarityClass = "bg-emerald-100 text-emerald-600 ring-1 ring-emerald-200"; }
+                return `
+                <div class="card p-6 relative">
+                    <div class="absolute top-4 right-4 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter ${rarityClass}">${rarity}</div>
+                    <div class="flex items-center gap-5 mb-6">
+                        <div onclick="openEmojiPickerForPlayer('${n}')" class="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center text-4xl shadow-sm cursor-pointer active:scale-90 transition-transform">${getPlayerEmoji(n)}</div>
+                        <div>
+                            <h3 class="text-xl font-black text-slate-800">${n}</h3>
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">出席次數: ${v.c}</p>
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function renderHistory() {
+            const pFilt = document.getElementById('filtPlayer').value;
+            const lFilt = document.getElementById('filtLoc').value;
+            const statsCard = document.getElementById('playerStatsCard');
+            let filtered = games.filter(g => (!pFilt || (g.players && g.players[pFilt] !== undefined)) && (!lFilt || g.location === lFilt));
+            if(pFilt) {
+                let pSum = 0; filtered.forEach(g => pSum += g.players[pFilt]);
+                statsCard.innerHTML = `<div class="card p-6 bg-indigo-600 text-white mb-4 flex justify-between items-center shadow-lg shadow-indigo-100"><div><div class="text-[10px] font-bold opacity-60 uppercase mb-1">玩家盈虧</div><div class="text-3xl font-black font-mono">${pSum > 0 ? '+' : ''}${pSum}</div></div><div class="text-3xl">${getPlayerEmoji(pFilt)}</div></div>`;
+                statsCard.classList.remove('hidden');
+            } else { statsCard.classList.add('hidden'); }
+            document.getElementById('historyList').innerHTML = filtered.map(g => `
+                <div class="card p-5">
+                    <div class="flex justify-between text-[10px] text-slate-300 mb-4 font-black uppercase">
+                        <span>📅 ${g.date?.split('T')[0]} <span class="ml-2 text-indigo-400">🀄 ${g.type || '廣東牌'}</span></span>
+                        <span>📍 ${g.location}</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        ${g.players ? Object.entries(g.players).map(([n, v]) => `<div class="p-3 rounded-2xl ${n===pFilt ? 'bg-indigo-50 ring-2 ring-indigo-100' : 'bg-slate-50'} flex justify-between"><span>${getPlayerEmoji(n)} ${n}</span><span class="font-bold ${v>=0?'profit':'loss'}">${v>0?'+':''}${v}</span></div>`).join('') : ''}
+                    </div>
+                </div>`).join('');
+        }
+
+        async function saveGame() {
+            const date = document.getElementById('gDate').value;
+            const loc = document.getElementById('gLoc').value;
+            const type = document.getElementById('gType').value;
+            const pNames = document.querySelectorAll('.pn');
+            const pScores = document.querySelectorAll('.ps');
+            let players = {}, checkSum = 0;
+            pNames.forEach((n, i) => { if(n.value) { const s = parseFloat(pScores[i].value || 0); players[n.value] = s; checkSum += s; } });
+            if(!date || !loc || Object.keys(players).length < 4) return alert("資料不全");
+            const btn = document.getElementById('saveBtn'); btn.disabled = true; btn.innerText = "儲存中...";
+            try {
+                await fetch(API_URL, { method: 'POST', body: JSON.stringify({ date, location: loc, type, players }) });
+                alert("儲存成功！"); toggleInput(); fetchGames();
+            } catch (e) { alert("儲存失敗"); } finally { btn.disabled = false; btn.innerText = "確認儲存"; }
+        }
+
+        function populateFilters() {
+            const players = new Set(), locs = new Set();
+            games.forEach(g => { if(g.players) Object.keys(g.players).forEach(p => players.add(p)); locs.add(g.location); });
+            const pList = Array.from(players).sort();
+            updateSelect('filtPlayer', pList, '👤 選擇玩家');
+            updateSelect('filtLoc', Array.from(locs).sort(), '📍 選擇地點');
+            document.getElementById('allPlayersList').innerHTML = pList.map(p => `<option value="${p}">`).join('');
+        }
+
+        function updateSelect(id, list, placeholder) {
+            const el = document.getElementById(id); const val = el.value;
+            el.innerHTML = `<option value="">${placeholder}</option>` + list.map(i => `<option value="${i}">${i}</option>`).join('');
+            el.value = val;
+        }
+
+        function switchTab(t) {
+            ['rank', 'friends', 'me', 'history'].forEach(id => {
+                document.getElementById('content-'+id)?.classList.toggle('hidden', id !== t);
+                const btn = document.getElementById('btn-'+id);
+                if (btn) btn.className = id === t ? 'pb-3 text-sm font-bold tab-active' : 'pb-3 text-sm font-bold text-slate-400';
+            });
+        }
+
+        function toggleInput() { document.getElementById('inputForm').classList.toggle('hidden'); if(!document.getElementById('inputForm').classList.contains('hidden')) document.getElementById('gDate').valueAsDate = new Date(); }
+        function openEmojiPicker(idx) { currentTargetInputIdx = idx; currentEditingPlayer = null; document.getElementById('emojiPicker').classList.remove('hidden'); }
+        function openEmojiPickerForPlayer(name) { currentEditingPlayer = name; currentTargetInputIdx = null; document.getElementById('emojiPicker').classList.remove('hidden'); }
+        function closeEmojiPicker() { document.getElementById('emojiPicker').classList.add('hidden'); }
+        function selectEmoji(emoji) {
+            if (currentEditingPlayer) { playerEmojis[currentEditingPlayer] = emoji; localStorage.setItem('playerEmojis', JSON.stringify(playerEmojis)); renderAll(); }
+            else if (currentTargetInputIdx !== null) { document.querySelectorAll('.emoji-btn')[currentTargetInputIdx].innerText = emoji; }
+            closeEmojiPicker();
+        }
+        function initP() {
+            const c = document.getElementById('pContainer'); c.innerHTML = '';
+            for(let i=0; i<4; i++) {
+                c.innerHTML += `<div class="bg-slate-50 p-4 rounded-2xl flex items-center gap-3"><button onclick="openEmojiPicker(${i})" class="emoji-btn text-2xl w-10">👤</button><div class="flex-grow min-w-0"><input type="text" class="pn bg-transparent border-none text-[10px] font-bold w-full focus:outline-none" placeholder="名字" list="allPlayersList" oninput="syncEmoji(${i})"><input type="number" class="ps bg-transparent border-none text-xl font-black w-full focus:outline-none text-indigo-600" placeholder="0"></div></div>`;
+            }
+        }
+        function syncEmoji(idx) {
+            const name = document.querySelectorAll('.pn')[idx].value;
+            document.querySelectorAll('.emoji-btn')[idx].innerText = playerEmojis[name] || "👤";
+        }
+        document.getElementById('emojiGrid').innerHTML = EMOJI_LIST.map(e => `<div onclick="selectEmoji('${e}')" class="p-3 text-center hover:bg-slate-100 rounded-2xl cursor-pointer text-2xl transition-colors">${e}</div>`).join('');
+        window.onload = () => { initP(); fetchGames(); };
+    </script>
+</body>
+</html>
