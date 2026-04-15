@@ -465,18 +465,20 @@
         </div>
 
         <!-- Tab Content: Me -->
-        <div id="content-me" class="hidden space-y-8 animate__animated animate__fadeIn">
-            <div class="flex justify-between items-center px-1">
-                <h2 class="font-black text-2xl text-emerald-700 flex items-center gap-3">
-                    <i class="fa-solid fa-fire-flame-curved"></i> <span id="myNameDisplay">Yanyi</span> 戰報
-                </h2>
-                <select id="meYearSel" onchange="renderMeTab()" class="px-5 py-2 rounded-full text-xs font-black outline-none border-none shadow-sm">
-                    <option value="All">所有年份</option>
-                    <option value="2026">2026 年</option>
-                    <option value="2025">2025 年</option>
-                    <option value="2024">2024 年</option>
-                </select>
-            </div>
+       <div id="content-me" class="hidden space-y-8 animate__animated animate__fadeIn">
+    <div class="flex justify-between items-center px-1 gap-2">
+        <h2 class="font-black text-xl sm:text-2xl text-emerald-700 flex items-center gap-2 whitespace-nowrap overflow-hidden">
+            <i class="fa-solid fa-fire-flame-curved flex-shrink-0"></i> 
+            <span class="truncate"><span id="myNameDisplay">Yanyi</span> 戰報</span>
+        </h2>
+        
+        <select id="meYearSel" onchange="renderMeTab()" class="flex-shrink-0 max-w-[120px] px-3 py-2 rounded-full text-[10px] sm:text-xs font-black outline-none border-none shadow-sm bg-white cursor-pointer">
+            <option value="All">所有年份</option>
+            <option value="2026">2026 年</option>
+            <option value="2025">2025 年</option>
+            <option value="2024">2024 年</option>
+        </select>
+    </div>
             
             <div class="grid grid-cols-2 sm:grid-cols-3 gap-4" id="meSummary"></div>
             
