@@ -736,87 +736,126 @@
         }
 
         function renderMeTab() {
-            const year = document.getElementById('meYearSel').value;
-            const myData = games.filter(g => (year === 'All' || g.date?.includes(year)) && g.players && (g.players[MY_NAME] !== undefined || g.players["Yanyi"] !== undefined));
-            let total = 0, wins = 0, locStats = {}, typeStats = {}, luckMap = {}, typeCount = {}, streak = 0, maxStreak = 0, currentStreak = 0;
+    const year = document.getElementById('meYearSel').value;
+    
+    // 獲取數據
+    const myData = games.filter(g => {
+        const matchesYear = (year === 'All' || g.date?.includes(year));
+        if (!g.players) return false;
+        const hasMe = Object.keys(g.players).some(p => p.toLowerCase() === "yanyi");
+        return matchesYear && hasMe;
+    });
+
+    let total = 0, wins = 0, locStats = {}, typeStats = {}, luckMap = {}, typeCount = {};
+    let currentStreak = 0, maxStreak = 0;
+    let validScores = []; 
+
+    myData.forEach((g) => {
+        const myKey = Object.keys(g.players).find(p => p.toLowerCase() === "yanyi");
+        const score = g.players[myKey];
+        const type = g.type || "廣東牌";
+        
+        // 累積盈虧與地點（不論是否為彙總數據都保留）
+        total += score;
+        locStats[g.location] = (locStats[g.location] || 0) + score;
+
+        // 判斷是否為彙總數據
+        const isCumulative = (g.date === '2024-04-27' && g.location === 'yanyi home') || score === 1440;
+
+        if (!isCumulative) {
+            validScores.push(score);
             
-            myData.forEach((g, idx) => {
-                const score = g.players[MY_NAME] !== undefined ? g.players[MY_NAME] : g.players["Yanyi"];
-                const type = g.type || "廣東牌";
-                total += score;
-                if(score > 0) { wins++; currentStreak++; maxStreak = Math.max(maxStreak, currentStreak); } else { currentStreak = 0; }
-                locStats[g.location] = (locStats[g.location] || 0) + score;
-                typeStats[type] = (typeStats[type] || 0) + score;
-                typeCount[type] = (typeCount[type] || 0) + 1;
-                Object.keys(g.players).forEach(p => { if (p.toLowerCase() !== MY_NAME.toLowerCase()) luckMap[p] = (luckMap[p] || 0) + score; });
+            // 勝率與連勝計算
+            if(score > 0) { 
+                wins++; 
+                currentStreak++; 
+                maxStreak = Math.max(maxStreak, currentStreak); 
+            } else { 
+                currentStreak = 0; 
+            }
+
+            typeStats[type] = (typeStats[type] || 0) + score;
+            typeCount[type] = (typeCount[type] || 0) + 1;
+
+            // 玄學分析（旺我剋我）
+            Object.keys(g.players).forEach(p => { 
+                if (p.toLowerCase() !== "yanyi") {
+                    luckMap[p] = (luckMap[p] || 0) + score;
+                }
             });
-
-            const avgScore = myData.length > 0 ? (total / myData.length).toFixed(1) : 0;
-            const winRate = myData.length > 0 ? ((wins / myData.length) * 100).toFixed(0) : 0;
-            const mostType = Object.entries(typeCount).sort((a,b) => b[1] - a[1])[0]?.[0] || '--';
-
-            document.getElementById('meSummary').innerHTML = `
-                <div class="mj-card p-6 text-center border-none shadow-emerald-100 shadow-xl ${total>=0?'profit-card':'loss-card'} card-slide">
-                    <div class="text-[10px] opacity-80 font-black uppercase tracking-widest">累積盈虧</div>
-                    <div class="text-3xl font-black font-mono profit-value">${total>=0?'+':''}${total}</div>
-                </div>
-                <div class="mj-card p-6 text-center border-none shadow-xl card-slide" style="animation-delay: 0.1s">
-                    <div class="text-[10px] text-gray-400 font-black uppercase tracking-widest">勝率</div>
-                    <div class="text-3xl font-black text-emerald-800 font-mono">${winRate}%</div>
-                </div>
-                <div class="mj-card p-6 text-center border-none shadow-xl card-slide" style="animation-delay: 0.2s">
-                    <div class="text-[10px] text-gray-400 font-black uppercase tracking-widest">平均得分</div>
-                    <div class="text-3xl font-black text-emerald-800 font-mono">${avgScore}</div>
-                </div>
-                <div class="mj-card p-6 text-center border-none shadow-xl card-slide" style="animation-delay: 0.3s">
-                    <div class="text-[10px] text-gray-400 font-black uppercase tracking-widest">連勝紀錄</div>
-                    <div class="text-3xl font-black text-emerald-800 font-mono">${maxStreak}</div>
-                </div>
-                <div class="mj-card p-6 text-center border-none shadow-xl card-slide" style="animation-delay: 0.4s">
-                    <div class="text-[10px] text-gray-400 font-black uppercase tracking-widest">對戰局數</div>
-                    <div class="text-3xl font-black text-emerald-800 font-mono">${myData.length}</div>
-                </div>
-                <div class="mj-card p-6 text-center border-none shadow-xl card-slide" style="animation-delay: 0.5s">
-                    <div class="text-[10px] text-gray-400 font-black uppercase tracking-widest">常玩牌型</div>
-                    <div class="text-3xl font-black text-emerald-800 font-mono" style="font-size:1.2rem">${mostType}</div>
-                </div>`;
-            setTimeout(() => {
-                const profitVal = document.querySelector('.profit-value');
-                if(profitVal) animateNumber(profitVal, total);
-            }, 100);
-
-            // 牌型分析
-            document.getElementById('meTypeAnalysis').innerHTML = Object.entries(typeStats).map(([t, v]) => `
-                <div class="mj-card p-4 text-center border-t-4 ${v>=0?'border-t-emerald-500':'border-t-red-500'}">
-                    <div class="text-[9px] text-gray-400 font-black uppercase mb-1">${t}</div>
-                    <div class="text-lg font-black font-mono ${v>=0?'profit':'loss'}">${v>0?'+':''}${v}</div>
-                    <div class="text-[8px] text-gray-400 mt-1">${typeCount[t]} 場</div>
-                </div>`).join('') || '<p class="col-span-full text-center text-gray-400 text-xs">暫無數據</p>';
-
-            const sortedLuck = Object.entries(luckMap).sort((a,b) => b[1] - a[1]);
-            const luckHTML = (list) => list.map(([n, v]) => {
-                const count = myData.filter(g => g.players && g.players[n] !== undefined).length;
-                return `
-                <div class="flex justify-between items-center bg-emerald-50 p-3 rounded-xl border border-emerald-100">
-                    <span class="text-xs font-black text-emerald-700 flex items-center gap-3">
-                        <span class="avatar-frame !w-8 !h-10 !text-sm">${playerEmojis[n]||'👤'}</span> ${n}
-                    </span>
-                    <div class="text-right">
-                        <div class="text-sm font-black font-mono ${v>=0?'text-emerald-600':'text-red-600'}">${v>0?'+':''}${v}</div>
-                        <div class="text-[8px] text-gray-400">${count} 場</div>
-                    </div>
-                </div>`;
-            }).join('') || '<p class="text-[11px] text-gray-400 italic">尚未解鎖緣分...</p>';
-            
-            document.getElementById('luckBest').innerHTML = luckHTML(sortedLuck.slice(0, 3).filter(x => x[1] > 0));
-            document.getElementById('luckWorst').innerHTML = luckHTML(sortedLuck.reverse().slice(0, 3).filter(x => x[1] < 0));
-            
-            document.getElementById('meLocs').innerHTML = Object.entries(locStats).map(([l, v]) => `
-                <div class="mj-card p-5 flex justify-between items-center hover:bg-emerald-50/50 transition-colors">
-                    <span class="font-black text-emerald-800 flex items-center gap-3"><i class="fa-solid fa-map-location-dot text-emerald-600"></i> ${l}</span>
-                    <span class="font-black font-mono text-xl ${v>=0?'profit':'loss'}">${v>0?'+':''}${v}</span>
-                </div>`).join('');
         }
+    });
+
+    const avgScore = validScores.length > 0 ? (total / validScores.length).toFixed(1) : 0;
+    const winRate = validScores.length > 0 ? ((wins / validScores.length) * 100).toFixed(0) : 0;
+    const highest = validScores.length > 0 ? Math.max(...validScores) : 0;
+
+    // 更新頂部卡片 (移除最常玩，獨立拆分勝率與最高連勝)
+    document.getElementById('meSummary').innerHTML = `
+        <div class="mj-card p-6 text-center border-none shadow-emerald-100 shadow-xl ${total>=0?'profit-card':'loss-card'} card-slide">
+            <div class="text-[10px] opacity-80 font-black uppercase tracking-widest">累積盈虧</div>
+            <div class="text-3xl font-black font-mono profit-value">${total>=0?'+':''}${total}</div>
+        </div>
+        <div class="mj-card p-6 text-center border-none shadow-xl card-slide" style="animation-delay: 0.1s">
+            <div class="text-[10px] text-gray-400 font-black uppercase tracking-widest">單場最高</div>
+            <div class="text-3xl font-black text-emerald-600 font-mono">+${highest}</div>
+        </div>
+        <div class="mj-card p-6 text-center border-none shadow-xl card-slide" style="animation-delay: 0.2s">
+            <div class="text-[10px] text-gray-400 font-black uppercase tracking-widest">勝率</div>
+            <div class="text-3xl font-black text-emerald-800 font-mono">${winRate}%</div>
+        </div>
+        <div class="mj-card p-6 text-center border-none shadow-xl card-slide" style="animation-delay: 0.3s">
+            <div class="text-[10px] text-gray-400 font-black uppercase tracking-widest">最高連勝</div>
+            <div class="text-3xl font-black text-emerald-800 font-mono">${maxStreak}</div>
+        </div>
+        <div class="mj-card p-6 text-center border-none shadow-xl card-slide" style="animation-delay: 0.4s">
+            <div class="text-[10px] text-gray-400 font-black uppercase tracking-widest">平均得分</div>
+            <div class="text-3xl font-black text-emerald-800 font-mono">${avgScore}</div>
+        </div>
+        <div class="mj-card p-6 text-center border-none shadow-xl card-slide" style="animation-delay: 0.5s">
+            <div class="text-[10px] text-gray-400 font-black uppercase tracking-widest">實戰局數</div>
+            <div class="text-3xl font-black text-emerald-800 font-mono">${validScores.length}</div>
+        </div>`;
+
+    setTimeout(() => {
+        const profitVal = document.querySelector('.profit-value');
+        if(profitVal) animateNumber(profitVal, total);
+    }, 100);
+
+    // 牌型分析
+    document.getElementById('meTypeAnalysis').innerHTML = Object.entries(typeStats).map(([t, v]) => `
+        <div class="mj-card p-4 text-center border-t-4 ${v>=0?'border-t-emerald-500':'border-t-red-500'}">
+            <div class="text-[9px] text-gray-400 font-black uppercase mb-1">${t}</div>
+            <div class="text-lg font-black font-mono ${v>=0?'profit':'loss'}">${v>0?'+':''}${v}</div>
+            <div class="text-[8px] text-gray-400 mt-1">${typeCount[t]} 場</div>
+        </div>`).join('') || '<p class="col-span-full text-center text-gray-400 text-xs">暫無數據</p>';
+
+    // 更新玄學分析 (旺我剋我)
+    const sortedLuck = Object.entries(luckMap).sort((a,b) => b[1] - a[1]);
+    const luckHTML = (list) => list.map(([n, v]) => {
+        const count = myData.filter(g => g.players && g.players[n] !== undefined && !(g.date === '2024-04-27' && g.location === 'yanyi home')).length;
+        return `
+        <div class="flex justify-between items-center bg-emerald-50 p-3 rounded-xl border border-emerald-100 mb-2">
+            <span class="text-xs font-black text-emerald-700 flex items-center gap-3">
+                <span class="avatar-frame !w-8 !h-10 !text-sm">${playerEmojis[n]||'👤'}</span> ${n}
+            </span>
+            <div class="text-right">
+                <div class="text-sm font-black font-mono ${v>=0?'text-emerald-600':'text-red-600'}">${v>0?'+':''}${v}</div>
+                <div class="text-[8px] text-gray-400">${count} 場</div>
+            </div>
+        </div>`;
+    }).join('');
+    
+    document.getElementById('luckBest').innerHTML = luckHTML(sortedLuck.slice(0, 3).filter(x => x[1] > 0)) || '<p class="text-xs text-gray-400">尚未解鎖...</p>';
+    document.getElementById('luckWorst').innerHTML = luckHTML([...sortedLuck].reverse().slice(0, 3).filter(x => x[1] < 0)) || '<p class="text-xs text-gray-400">尚未解鎖...</p>';
+    
+    // 地點表現
+    document.getElementById('meLocs').innerHTML = Object.entries(locStats).map(([l, v]) => `
+        <div class="mj-card p-5 flex justify-between items-center hover:bg-emerald-50/50 transition-colors">
+            <span class="font-black text-emerald-800 flex items-center gap-3"><i class="fa-solid fa-map-location-dot text-emerald-600"></i> ${l}</span>
+            <span class="font-black font-mono text-xl ${v>=0?'profit':'loss'}">${v>0?'+':''}${v}</span>
+        </div>`).join('');
+}
 
         function renderHistory() {
             const pFilt = document.getElementById('filtPlayer').value, lFilt = document.getElementById('filtLoc').value;
