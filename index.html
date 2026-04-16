@@ -650,18 +650,47 @@
         }
 
         async function fetchGames() {
-            updateStatus("☁️ 數據同步中...", "bg-emerald-500 animate-pulse");
-            try {
-                const response = await fetch(API_URL);
-                const data = await response.json();
-                games = data.games ? data.games.reverse() : [];
-                if (data.emojis) playerEmojis = { ...playerEmojis, ...data.emojis };
-                updateStatus("✅ 數據已入冊", "bg-emerald-500");
-                renderAll();
-            } catch (e) { 
-                updateStatus("❌ 連線失敗", "bg-red-500");
-            }
+    // 1. 先從瀏覽器「小冰箱」(localStorage) 檢查有沒有舊資料
+    const cachedData = localStorage.getItem('mj_games_cache');
+    const cachedEmojis = localStorage.getItem('mj_emojis_cache');
+
+    if (cachedData) {
+        try {
+            // 如果冰箱有資料，先拿出來顯示，讓畫面秒開
+            games = JSON.parse(cachedData);
+            if (cachedEmojis) playerEmojis = { ...playerEmojis, ...JSON.parse(cachedEmojis) };
+            updateStatus("⚡ 正在快取預載", "bg-emerald-500");
+            renderAll(); 
+        } catch (e) {
+            console.error("讀取快取失敗", e);
         }
+    } else {
+        // 如果是第一次使用（冰箱沒資料），才顯示載入中
+        updateStatus("☁️ 首次數據同步中...", "bg-emerald-500 animate-pulse");
+    }
+
+    // 2. 同時去 Google Sheet 拿最新資料
+    try {
+        const response = await fetch(API_URL);
+        const data = await response.json();
+        
+        // 拿到了新資料，存進「小冰箱」留給下次用
+        games = data.games ? data.games.reverse() : [];
+        if (data.emojis) playerEmojis = { ...playerEmojis, ...data.emojis };
+        
+        localStorage.setItem('mj_games_cache', JSON.stringify(games));
+        localStorage.setItem('mj_emojis_cache', JSON.stringify(data.emojis || {}));
+
+        updateStatus("✅ 數據已入冊", "bg-emerald-500");
+        renderAll(); // 用最新拿到的資料再更新一次畫面
+    } catch (e) { 
+        if (cachedData) {
+            updateStatus("📡 離線模式", "bg-orange-500");
+        } else {
+            updateStatus("❌ 連線失敗", "bg-red-500");
+        }
+    }
+}
 
         function updateStatus(text, dotClass) {
             document.getElementById('statusText').innerText = text;
