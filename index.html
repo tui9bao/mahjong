@@ -596,58 +596,94 @@
         let currentTargetInputIdx = null;
         let currentEditingPlayer = null;
 
-        // 稱號庫
         const IDENTITY_POOLS = {
-            GOD: [
-                { t: "至尊雀聖", q: "我睇你隻牌，就知你下一隻想摸咩喇。", c: "bg-yellow-100 text-yellow-700" },
-                { t: "中環雀王", q: "今晚全場我買單，邊個都唔准同我爭！", c: "bg-amber-100 text-amber-700" },
-                { t: "自摸神手", q: "唔好意思呀，我又自摸喇，你哋快啲比錢啦。", c: "bg-indigo-100 text-indigo-700" },
-                { t: "冷面雀神", q: "牌局如戰場，我唔會對任何人心軟。", c: "bg-slate-800 text-white" },
-                { t: "傳奇十三么", q: "大牌唔係你想做就有，係要天意配合。", c: "bg-purple-100 text-purple-700" },
-                { t: "不敗神話", q: "求一敗而不可得，寂寞係我嘅代稱。", c: "bg-yellow-500 text-white" }
-            ],
-            WINNER: [
-                { t: "截胡專家", q: "想食大牌？問過我先啦，我就係鍾意截你胡。", c: "bg-emerald-100 text-emerald-700" },
-                { t: "碰碰車神", q: "碰！碰！碰！碰多兩下你就清袋㗎喇。", c: "bg-blue-100 text-blue-700" },
-                { t: "連莊霸主", q: "坐得呢個位就唔打算起身，連莊連到你驚。", c: "bg-teal-100 text-teal-700" },
-                { t: "食糊機器", q: "贏錢只係其次，我最享受係推牌果下聲。", c: "bg-green-100 text-green-700" },
-                { t: "牌桌獵人", q: "我已經盯住你隻生章好耐喇。", c: "bg-orange-100 text-orange-700" },
-                { t: "技術型雀友", q: "打牌要講科學，計算先係王道。", c: "bg-blue-50 text-blue-600" }
-            ],
-            NORMAL: [
-                { t: "資深雀骨", q: "摸多隻，等埋呢隻，我就自摸㗎喇！", c: "bg-slate-100 text-slate-600" },
-                { t: "穩陣派宗師", q: "唔求贏大錢，最緊要唔好輸大牌。", c: "bg-gray-100 text-gray-700" },
-                { t: "摸牌達人", q: "呢隻牌，一摸落手就知係我想要個隻。", c: "bg-cyan-100 text-cyan-700" },
-                { t: "隱世雀傑", q: "平時唔出聲，一出手就嚇死你。", c: "bg-zinc-100 text-zinc-700" },
-                { t: "雀壇中堅", q: "有我喺度，個場就唔會悶。", c: "bg-sky-50 text-sky-600" },
-                { t: "快手雀友", q: "打快啲啦，諗咁耐個發財都唔會變白板。", c: "bg-lime-100 text-lime-700" }
-            ],
-            LOSER: [
-                { t: "慈善大翁", q: "輸錢皆因贏錢起，我只係暫時將啲錢放喺你度。", c: "bg-rose-100 text-rose-700" },
-                { t: "交學費大師", q: "我係嚟交學費嘅，各位前輩手下留情呀。", c: "bg-red-50 text-red-600" },
-                { t: "外賣專員", q: "大家開開心心打牌，最緊要下午茶好食。", c: "bg-pink-100 text-pink-700" },
-                { t: "地獄黑仔王", q: "摸親都係花，打親都被截，天理何在？", c: "bg-stone-200 text-stone-700" },
-                { t: "牌桌明燈", q: "跟住我打對家就實無錯喇。", c: "bg-yellow-50 text-yellow-600" },
-                { t: "積極參與者", q: "贏輸唔重要，最緊要有得打。", c: "bg-orange-50 text-orange-600" }
-            ],
-            NOOB: [
-                { t: "雀壇新丁", q: "邊隻係一筒話？我仲分唔清...", c: "bg-slate-50 text-slate-400" },
-                { t: "觀察員", q: "我睇多兩鋪先，你哋打先啦。", c: "bg-stone-50 text-stone-400" },
-                { t: "潛力股", q: "等我學成歸來，實贏返晒你哋。", c: "bg-violet-50 text-violet-500" },
-                { t: "幸運小草", q: "亂打亂撞，竟然比我食到個亂碟。", c: "bg-green-50 text-green-500" },
-                { t: "熱情新手", q: "再黎一局！我開始掌握到規律喇！", c: "bg-amber-50 text-amber-500" },
-                { t: "陪跑專員", q: "我今日黎主要係負責洗牌同埋比錢。", c: "bg-gray-50 text-gray-400" }
-            ]
-        };
-
-        function getIdentity(name, stats) {
+    GOD: [
+        { t: "自摸神手", q: "唔好意思呀，我又自摸喇，你哋快啲比錢啦。", c: "bg-indigo-100 text-indigo-700" },
+        { t: "中環雀王", q: "今晚全場我買單，邊個都唔准同我爭！", c: "bg-amber-100 text-amber-700" },
+        { t: "至尊雀聖", q: "我睇你隻牌，就知你下一隻想摸咩喇。", c: "bg-yellow-100 text-yellow-700" },
+        { t: "冷面雀神", q: "牌局如戰場，我唔會對任何人心軟。", c: "bg-slate-800 text-white" },
+        { t: "傳奇十三么", q: "大牌唔係你想做就有，係要天意配合。", c: "bg-purple-100 text-purple-700" },
+        { t: "不敗神話", q: "求一敗而不可得，寂寞係我嘅代稱。", c: "bg-yellow-500 text-white" },
+        { t: "雀界攞命陳", q: "我唔係針對邊個，我係話在座各位都係畀錢我使。", c: "bg-red-600 text-white" },
+        { t: "通殺大將軍", q: "一家贏三家，你哋啲錢我幫你儲埋先。", c: "bg-orange-600 text-white" },
+        { t: "贏到驚星人", q: "贏到我自己都唔好意思，下次再贏過。", c: "bg-pink-600 text-white" },
+        { t: "無敵破壞王", q: "我一坐低，呢張檯就注定要爆。", c: "bg-rose-700 text-white" }
+    ],
+    WINNER: [
+        { t: "截胡專家", q: "想食大牌？問過我先啦，我就係鍾意截你胡。", c: "bg-emerald-100 text-emerald-700" },
+        { t: "碰碰車神", q: "碰！碰！碰！碰多兩下你就清袋㗎喇。", c: "bg-blue-100 text-blue-700" },
+        { t: "連莊霸主", q: "坐得呢個位就唔打算起身，冧莊冧到你驚。", c: "bg-teal-100 text-teal-700" },
+        { t: "食糊機器", q: "贏錢只係其次，我最享受係推牌果下聲。", c: "bg-green-100 text-green-700" },
+        { t: "牌桌獵人", q: "我已經盯住你隻生章好耐喇。", c: "bg-orange-100 text-orange-700" },
+        { t: "技術型雀友", q: "打牌要講科學，計算先係王道。", c: "bg-blue-50 text-blue-600" },
+        { t: "收割機", q: "鋤強扶弱我就唔識，我淨係識收割。", c: "bg-emerald-600 text-white" },
+        { t: "食腦玩家", q: "你打運，我打命，你點同我鬥？", c: "bg-lime-600 text-white" },
+        { t: "截牌老司機", q: "你想食嗰隻牌，一早喺我對手入面。", c: "bg-cyan-600 text-white" },
+        { t: "單吊之鬼", q: "單吊至係男人的浪漫，你識咩呀？", c: "bg-indigo-600 text-white" }
+    ],
+    NORMAL: [
+        { t: "資深雀骨", q: "摸多隻，等埋呢隻，我就自摸㗎喇！", c: "bg-slate-100 text-slate-600" },
+        { t: "穩陣派宗師", q: "唔求贏大錢，最緊要唔好輸大牌。", c: "bg-gray-100 text-gray-700" },
+        { t: "摸牌達人", q: "呢隻牌，一摸落手就知係我想要個隻。", c: "bg-cyan-100 text-cyan-700" },
+        { t: "隱世雀傑", q: "平時唔出聲，一出手就嚇死你。", c: "bg-zinc-100 text-zinc-700" },
+        { t: "雀壇中堅", q: "有我喺度，個場就唔會悶。", c: "bg-sky-50 text-sky-600" },
+        { t: "快手雀友", q: "打快啲啦，諗咁耐個發財都唔會變白板。", c: "bg-lime-100 text-lime-700" },
+        { t: "太極高手", q: "以柔制剛，輸贏都係幾草嘢。", c: "bg-stone-100 text-stone-600" },
+        { t: "守門員", q: "我坐喺呢個位，就係要守住大家份糧。", c: "bg-neutral-200 text-neutral-700" },
+        { t: "牌桌佛系男", q: "不求食糊，不求自摸，緣份到自然會贏。", c: "bg-orange-50 text-orange-700" },
+        { t: "觀察家", q: "我睇穿晒你哋啲牌，不過我唔講。", c: "bg-slate-200 text-slate-800" }
+    ],
+    LOSER: [
+        { t: "慈善大翁", q: "輸錢皆因贏錢起，我只係暫時將啲錢放喺你度。", c: "bg-rose-100 text-rose-700" },
+        { t: "交學費大師", q: "我係嚟交學費嘅，各位前輩手下留情呀。", c: "bg-red-50 text-red-600" },
+        { t: "外賣專員", q: "大家開開心心打牌，最緊要宵夜好食。", c: "bg-pink-100 text-pink-700" },
+        { t: "地獄黑仔王", q: "摸親都係花，打親都被截，天理何在？", c: "bg-stone-200 text-stone-700" },
+        { t: "牌桌明燈", q: "跟住我打對家就實無錯喇。", c: "bg-yellow-50 text-yellow-600" },
+        { t: "積極參與者", q: "贏輸唔重要，最緊要有得打。", c: "bg-orange-50 text-orange-600" },
+        { t: "散財童子", q: "今日我請，大家隨便食，隨便贏。", c: "bg-red-100 text-red-800" },
+        { t: "人肉提款機", q: "密碼係 1234，大家隨便撳。", c: "bg-blue-200 text-blue-900" },
+        { t: "氣氛組組長", q: "雖然我輸錢，但係我講笑話好笑呀！", c: "bg-yellow-100 text-yellow-800" },
+        { t: "最後的溫柔", q: "我就係專登出銃畀你，費事你冇錢返屋企。", c: "bg-pink-50 text-pink-600" }
+    ],
+    NOOB: [
+        { t: "雀壇新丁", q: "邊隻係一筒話？我仲分唔清...", c: "bg-slate-50 text-slate-400" },
+        { t: "觀察員", q: "我睇多兩鋪先，你哋打先啦。", c: "bg-stone-50 text-stone-400" },
+        { t: "潛力股", q: "等我學成歸來，實贏返晒你哋。", c: "bg-violet-50 text-violet-500" },
+        { t: "幸運小草", q: "亂打亂撞，竟然比我食到個亂碟。", c: "bg-green-50 text-green-500" },
+        { t: "熱情新手", q: "再黎一局！我開始掌握到規律喇！", c: "bg-amber-50 text-amber-500" },
+        { t: "陪跑專員", q: "我今日黎主要係負責洗牌同埋比錢。", c: "bg-gray-50 text-gray-400" },
+        { t: "路過英雄", q: "我只係路過，點知比你哋拉咗入嚟打。", c: "bg-zinc-100 text-zinc-500" },
+        { t: "學徒", q: "師父話齋，未贏錢先要學識輸錢。", c: "bg-emerald-50 text-emerald-500" },
+        { t: "實習雀友", q: "實習期內，請大家多多指教。", c: "bg-blue-50 text-blue-400" },
+        { t: "純情小白兔", q: "你哋啲牌咁複雜，我睇唔透呀。", c: "bg-rose-50 text-rose-400" }
+    ]
+};
+function getIdentity(name, stats) {
             const score = stats.t;
             const winRate = (stats.w / stats.c) * 100;
+            const count = stats.c;
+            
+            // 使用 Hash 確保同一個人在同一區間內的稱號是唯一的
             const hash = name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-            let pool = score >= 800 ? IDENTITY_POOLS.GOD : (winRate >= 45 || score >= 200 ? IDENTITY_POOLS.WINNER : (score <= -800 ? IDENTITY_POOLS.LOSER : (stats.c < 3 ? IDENTITY_POOLS.NOOB : IDENTITY_POOLS.NORMAL)));
+            
+            let pool;
+
+            // 實力區間判定 (你的 Condition)
+            if (score >= 800 || (count >= 15 && winRate >= 65)) {
+                pool = IDENTITY_POOLS.GOD;
+            } else if (score >= 150 || (winRate >= 50 && score > 0)) {
+                pool = IDENTITY_POOLS.WINNER;
+            } else if (score <= -500) {
+                pool = IDENTITY_POOLS.LOSER;
+            } else if (count < 3) {
+                pool = IDENTITY_POOLS.NOOB;
+            } else {
+                pool = IDENTITY_POOLS.NORMAL;
+            }
+
+            // 從對應的池子中取出稱號
             return pool[hash % pool.length];
         }
-
         async function fetchGames() {
     // 1. 先從瀏覽器「小冰箱」(localStorage) 檢查有沒有舊資料
     const cachedData = localStorage.getItem('mj_games_cache');
