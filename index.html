@@ -509,14 +509,13 @@
 
         <!-- Tab Content: History -->
         <div id="content-history" class="hidden space-y-6 animate__animated animate__fadeIn">
-            <div class="flex gap-3 overflow-x-auto pb-2 no-scrollbar">
-                <select id="filtPlayer" onchange="renderHistory()" class="px-5 py-3 rounded-2xl text-xs font-black outline-none shrink-0 shadow-sm"></select>
-                <select id="filtLoc" onchange="renderHistory()" class="px-5 py-3 rounded-2xl text-xs font-black outline-none shrink-0 shadow-sm"></select>
+            <div class="grid grid-cols-2 gap-2 mb-4">
+                <select id="filtPlayer" onchange="renderHistory()" class="!px-3 !py-3 !text-[11px] font-black outline-none shadow-sm"></select>
+                <select id="filtLoc" onchange="renderHistory()" class="!px-3 !py-3 !text-[11px] font-black outline-none shadow-sm"></select>
             </div>
             <div id="playerStatsCard" class="hidden"></div>
             <div id="historyList" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
         </div>
-    </div>
 
     <!-- Modal: Input Form -->
     <div id="inputForm" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
@@ -953,25 +952,47 @@
 
         function renderPlayerQuickSelect() {
             let s = {};
+            // 統計所有遊戲中所有玩家出現的次數
             games.forEach(g => {
                 if(!g.players) return;
                 Object.keys(g.players).forEach(n => {
-                    if(n.toLowerCase() !== MY_NAME.toLowerCase()) s[n] = (s[n] || 0) + 1;
+                    s[n] = (s[n] || 0) + 1;
                 });
             });
-            const topPlayers = Object.entries(s).sort((a,b) => b[1] - a[1]).slice(0, 8).map(x => x[0]);
-            document.getElementById('playerQuickSelect').innerHTML = topPlayers.map(n => `
-                <button type="button" onclick="quickAddPlayer('${n}')" class="player-quick-btn hover:shadow-lg transition-all">
-                    <span class="emoji">${playerEmojis[n] || '👤'}</span>
-                    <span>${n}</span>
-                </button>`).join('');
-        }
 
+            // 取得出現次數最高的前 8 名（不再排除自己）
+            const topPlayers = Object.entries(s)
+                .sort((a,b) => b[1] - a[1])
+                .slice(0, 8)
+                .map(x => x[0]);
+
+            const container = document.getElementById('playerQuickSelect');
+            if(container) {
+                container.innerHTML = topPlayers.map(n => `
+                    <button type="button" onclick="quickAddPlayer('${n}')" class="player-quick-btn hover:shadow-lg transition-all">
+                        <span class="emoji">${playerEmojis[n] || '👤'}</span>
+                        <span>${n}</span>
+                    </button>`).join('');
+            }
+        }
         function quickAddPlayer(name) {
             const pNames = document.querySelectorAll('.pn');
+            
+            // 檢查該玩家是否已經在格子裡，避免重複添加
+            for(let i=0; i<pNames.length; i++) {
+                if(pNames[i].value === name) return; 
+            }
+
+            // 尋找第一個空格子填入名字
             for(let i = 0; i < pNames.length; i++) {
                 if(!pNames[i].value) {
                     pNames[i].value = name;
+                    
+                    // 關鍵：呼叫 syncEmoji 讓頭像立刻顯示
+                    if (typeof syncEmoji === 'function') {
+                        syncEmoji(i);
+                    }
+                    
                     pNames[i].dispatchEvent(new Event('input'));
                     pNames[i].focus();
                     break;
@@ -1008,9 +1029,17 @@
         }
         function selectManualEmoji() { const val = document.getElementById('manualEmoji').value.trim(); if(val) { selectEmoji(val); document.getElementById('manualEmoji').value = ''; } }
         function initP() {
-            const c = document.getElementById('pContainer'); c.innerHTML = '';
+            const c = document.getElementById('pContainer'); 
+            c.innerHTML = '';
             for(let i=0; i<4; i++) {
-                c.innerHTML += `<div class="bg-emerald-50 p-4 rounded-xl flex items-center gap-4 border border-emerald-100 card-slide" style="animation-delay: ${i*0.1}s"><button type="button" onclick="openEmojiPicker(${i})" class="emoji-btn text-3xl avatar-frame !w-16 !h-20 flex-shrink-0 hover:scale-110 transition-transform">👤</button><div class="flex-grow min-w-0"><input type="text" class="pn bg-transparent border-none text-[10px] font-black w-full outline-none !text-emerald-800" placeholder="名字" oninput="syncEmoji(${i})"><input type="number" class="ps bg-transparent border-none text-xl font-black w-full outline-none !text-emerald-700" placeholder="0"></div></div>`;
+                c.innerHTML += `
+                <div class="bg-emerald-50 p-4 rounded-xl flex items-center gap-4 border border-emerald-100 card-slide" style="animation-delay: ${i*0.1}s">
+                    <button type="button" onclick="openEmojiPicker(${i})" class="emoji-btn text-3xl avatar-frame !w-16 !h-20 flex-shrink-0 hover:scale-110 transition-transform">👤</button>
+                    <div class="flex-grow min-w-0">
+                        <input type="text" class="pn bg-transparent border-none text-[10px] font-black w-full outline-none !text-emerald-800" placeholder="名字" oninput="syncEmoji(${i})">
+                        <input type="number" class="ps bg-transparent border-none text-xl font-black w-full outline-none !text-emerald-700" placeholder="0">
+                    </div>
+                </div>`;
             }
         }
         function syncEmoji(idx) { const name = document.querySelectorAll('.pn')[idx].value; document.querySelectorAll('.emoji-btn')[idx].innerText = playerEmojis[name] || "👤"; }
