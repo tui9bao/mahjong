@@ -2,11 +2,12 @@
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🀄 麻雀龍虎榜</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
         
@@ -327,6 +328,84 @@
             color: white;
         }
 
+        .fan-filter-btn {
+            padding: 10px 16px;
+            border-radius: 999px;
+            border: 2px solid #d1fae5;
+            background: white;
+            color: #047857;
+            font-size: 13px;
+            font-weight: 900;
+            white-space: nowrap;
+            flex-shrink: 0;
+            transition: all 0.2s ease;
+        }
+
+        .fan-filter-btn.active,
+        .fan-filter-btn:hover {
+            background: var(--mj-green-dark);
+            border-color: var(--mj-green-dark);
+            color: white;
+        }
+
+        .fan-sticky-filter {
+            position: sticky;
+            top: 0;
+            z-index: 80;
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 10px 0;
+            border-bottom: 1px solid #d1fae5;
+            box-shadow: 0 8px 18px rgba(16, 185, 129, 0.08);
+        }
+
+        #content-fan {
+            overflow: visible !important;
+        }
+
+        .fan-category-section {
+            scroll-margin-top: 76px;
+        }
+
+        .fan-category-heading {
+            background: linear-gradient(135deg, #047857, #10b981);
+            color: white;
+            border-radius: 12px;
+            padding: 9px 14px;
+            box-shadow: 0 6px 0 #065f46, 0 10px 18px rgba(16, 185, 129, 0.16);
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            pointer-events: none;
+        }
+
+        .search-box input {
+            padding-left: 44px !important;
+        }
+
+        .fan-detail {
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: all 0.25s ease;
+        }
+
+        .fan-card.open .fan-detail {
+            max-height: 120px;
+            opacity: 1;
+            margin-top: 8px;
+        }
+
         /* 彈窗關閉按鈕 */
         .modal-close-btn {
             position: absolute;
@@ -412,10 +491,133 @@
             gap: 16px;
         }
 
+        .monthly-chart-box {
+            height: 280px;
+            position: relative;
+        }
+
         @media (max-width: 640px) {
             .input-form-grid {
                 grid-template-columns: 1fr;
                 gap: 12px;
+            }
+
+            .monthly-chart-box {
+                height: 240px;
+            }
+        }
+
+        /* Layout trial: compact app-style navigation */
+        body {
+            padding-bottom: 116px;
+        }
+
+        body > .max-w-4xl {
+            padding-top: 22px;
+        }
+
+        header {
+            margin-bottom: 18px !important;
+            align-items: center !important;
+        }
+
+        header h1 {
+            font-size: 2.4rem !important;
+            line-height: 1.05;
+        }
+
+        header h1 span:first-child,
+        header h1 span:last-child {
+            font-size: 1.75rem !important;
+        }
+
+        header .btn-bone {
+            width: 54px !important;
+            height: 54px !important;
+            border-radius: 999px;
+        }
+
+        nav {
+            position: fixed;
+            left: 12px;
+            right: 12px;
+            bottom: max(12px, env(safe-area-inset-bottom));
+            z-index: 70;
+            display: grid !important;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 4px !important;
+            padding: 8px;
+            margin: 0 !important;
+            background: rgba(255, 255, 255, 0.96);
+            border: 1px solid #d1fae5 !important;
+            border-radius: 18px;
+            box-shadow: 0 14px 30px rgba(6, 95, 70, 0.16);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            overflow-x: visible !important;
+        }
+
+        .tab-btn {
+            min-width: 0;
+            padding: 8px 4px !important;
+            border-bottom: 0 !important;
+            border-radius: 12px;
+            font-size: 10px;
+            line-height: 1.1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            color: #6b7280;
+        }
+
+        .tab-btn::before {
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            font-size: 16px;
+            line-height: 1;
+        }
+
+        #btn-rank::before { content: "\f521"; }
+        #btn-friends::before { content: "\f0c0"; }
+        #btn-me::before { content: "\f201"; }
+        #btn-history::before { content: "\f1da"; }
+        #btn-fan::before { content: "\f03a"; }
+
+        .tab-active {
+            background: #d1fae5;
+            color: #047857 !important;
+            border-bottom: 0 !important;
+        }
+
+        @media (max-width: 640px) {
+            body > .max-w-4xl {
+                padding-left: 14px;
+                padding-right: 14px;
+            }
+
+            header h1 {
+                font-size: 1.65rem !important;
+                gap: 7px !important;
+            }
+
+            header h1 span:first-child,
+            header h1 span:last-child {
+                font-size: 1.2rem !important;
+            }
+
+            #statusText {
+                max-width: 180px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            header .btn-bone {
+                width: 48px !important;
+                height: 48px !important;
+                font-size: 1.1rem !important;
             }
         }
     </style>
@@ -446,6 +648,7 @@
             <button onclick="switchTab('friends')" id="btn-friends" class="tab-btn">名人堂</button>
             <button onclick="switchTab('me')" id="btn-me" class="tab-btn">個人戰績</button>
             <button onclick="switchTab('history')" id="btn-history" class="tab-btn">流水帳</button>
+            <button onclick="switchTab('fan')" id="btn-fan" class="tab-btn">番數表</button>
         </nav>
 
         <!-- Tab Content: Rank -->
@@ -460,27 +663,47 @@
         </div>
 
         <!-- Tab Content: Friends -->
-        <div id="content-friends" class="hidden animate__animated animate__fadeIn">
+        <div id="content-friends" class="hidden space-y-4 animate__animated animate__fadeIn">
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input id="friendSearch" type="search" oninput="renderFriends()" placeholder="搜尋玩家..." class="outline-none !py-3 !text-sm">
+            </div>
             <div id="friendsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
         </div>
 
         <!-- Tab Content: Me -->
        <div id="content-me" class="hidden space-y-8 animate__animated animate__fadeIn">
-    <div class="flex justify-between items-center px-1 gap-2">
-        <h2 class="font-black text-xl sm:text-2xl text-emerald-700 flex items-center gap-2 whitespace-nowrap overflow-hidden">
+    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center px-1 gap-3">
+        <h2 class="font-black text-xl sm:text-2xl text-emerald-700 flex items-center gap-2 min-w-0">
             <i class="fa-solid fa-fire-flame-curved flex-shrink-0"></i> 
-            <span class="truncate"><span id="myNameDisplay">Yanyi</span> 戰報</span>
+            <span class="truncate min-w-0"><span id="myNameDisplay">Yanyi</span> 戰績</span>
         </h2>
-        
-        <select id="meYearSel" onchange="renderMeTab()" class="flex-shrink-0 max-w-[120px] px-3 py-2 rounded-full text-[10px] sm:text-xs font-black outline-none border-none shadow-sm bg-white cursor-pointer">
-            <option value="All">所有年份</option>
-            <option value="2026">2026 年</option>
-            <option value="2025">2025 年</option>
-            <option value="2024">2024 年</option>
-        </select>
+
+        <div class="grid grid-cols-2 gap-2 w-full sm:w-auto sm:flex sm:items-center sm:gap-2 flex-shrink-0">
+            <select id="mePlayerSel" onchange="renderMeTab()" class="w-full sm:w-auto sm:min-w-[122px] px-3 py-2 rounded-full text-[10px] sm:text-xs font-black outline-none border-none shadow-sm bg-white cursor-pointer">
+            </select>
+            <select id="meYearSel" onchange="renderMeTab()" class="w-full sm:w-auto sm:min-w-[110px] px-3 py-2 rounded-full text-[10px] sm:text-xs font-black outline-none border-none shadow-sm bg-white cursor-pointer">
+                <option value="All">所有年份</option>
+                <option value="2026">2026 年</option>
+                <option value="2025">2025 年</option>
+                <option value="2024">2024 年</option>
+            </select>
+        </div>
     </div>
             
             <div class="grid grid-cols-2 sm:grid-cols-3 gap-4" id="meSummary"></div>
+
+            <div class="space-y-4">
+                <h3 class="font-black text-lg text-emerald-700 px-1 flex items-center gap-2">
+                    <i class="fa-solid fa-chart-column text-emerald-600"></i> 每月戰績
+                </h3>
+                <div class="mj-card p-5 gold-border">
+                    <div class="monthly-chart-box">
+                        <canvas id="monthlyChart"></canvas>
+                    </div>
+                    <p id="monthlyChartEmpty" class="hidden text-center text-gray-400 text-xs font-bold py-8">暫無每月戰績</p>
+                </div>
+            </div>
             
             <div class="space-y-4">
                 <h3 class="font-black text-lg text-emerald-700 px-1 flex items-center gap-2">
@@ -515,6 +738,24 @@
             </div>
             <div id="playerStatsCard" class="hidden"></div>
             <div id="historyList" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+        </div>
+
+        <!-- Tab Content: Fan Table -->
+        <div id="content-fan" class="hidden space-y-6 animate__animated animate__fadeIn">
+            <div class="flex justify-between items-center px-1 gap-3">
+                <h2 class="font-black text-xl sm:text-2xl text-emerald-700 flex items-center gap-2">
+                    <i class="fa-solid fa-table-list text-emerald-600"></i>
+                    港式台牌番數表
+                </h2>
+            </div>
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input id="fanSearch" type="search" oninput="renderFanTable(currentFanCategory)" placeholder="搜尋番種、類別或解釋..." class="outline-none !py-3 !text-sm">
+            </div>
+            <div class="fan-sticky-filter -mx-5 px-5">
+                <div id="fanCategoryBar" class="flex gap-2 overflow-x-auto pb-2"></div>
+            </div>
+            <div id="fanTableList" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
         </div>
 
     <!-- Modal: Input Form -->
@@ -586,15 +827,17 @@
     <datalist id="locs"></datalist>
     <datalist id="allPlayersList"></datalist>
 
+    <script src="fan-table-data.js"></script>
     <script>
         const API_URL = "https://script.google.com/macros/s/AKfycbxjcsKfsDT_O1dwdatSem-iVDgznptK2IVwoJeqVQjQGIs5wS1owDlzRHLNebr-vTYB2Q/exec";
-        const MY_NAME = "yanyi"; 
+        const DEFAULT_ME_NAME = "yanyi"; 
         const EMOJI_LIST = ["🀄️","🧧","🎲","💰","💎","🏆","🥇","👑","🦊","🐯","🦁","🐱","🐶","🐨","🐼","🐰","🐸","🐷","😊","😎","🤣","🤪","🤩","🥳","🧐","🫡","🫠","🤫","🤯","😡","😭","💀","👻","🤡","👽","🤖","🍀","⭐️","🌈","🌙","☀️"];
         
         let games = [];
         let playerEmojis = JSON.parse(localStorage.getItem('playerEmojis')) || {};
         let currentTargetInputIdx = null;
         let currentEditingPlayer = null;
+        let monthlyChart = null;
 
         const IDENTITY_POOLS = {
     GOD: [
@@ -727,6 +970,185 @@ function getIdentity(name, stats) {
     }
 }
 
+        function escapeHTML(value) {
+            return String(value ?? '').replace(/[&<>"']/g, ch => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            }[ch]));
+        }
+
+        function formatSigned(value) {
+            return `${value > 0 ? '+' : ''}${value}`;
+        }
+
+        let currentFanCategory = 'All';
+        let fanScrollTicking = false;
+
+        function fanCardHTML(item) {
+            return `
+                <button type="button" onclick="toggleFanCard(this)" class="fan-card mj-card p-4 text-left hover:bg-emerald-50 transition-colors">
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="min-w-0">
+                            <h3 class="font-black text-base text-emerald-800">${escapeHTML(item.name)}</h3>
+                        </div>
+                        <div class="flex-shrink-0 text-right">
+                            <div class="text-xl font-black font-mono text-emerald-600">${escapeHTML(item.points)}</div>
+                        </div>
+                    </div>
+                    <div class="fan-detail text-xs text-gray-600 leading-relaxed border-t border-emerald-100">
+                        <p class="pt-2">${escapeHTML(item.description)}</p>
+                    </div>
+                </button>
+            `;
+        }
+
+        function setFanActiveButton(category) {
+            document.querySelectorAll('.fan-filter-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.category === category);
+            });
+            const active = Array.from(document.querySelectorAll('.fan-filter-btn')).find(btn => btn.dataset.category === category);
+            if (active) active.scrollIntoView({ behavior: 'auto', inline: 'center', block: 'nearest' });
+        }
+
+        function handleFanScroll() {
+            const content = document.getElementById('content-fan');
+            if (!content || content.classList.contains('hidden') || currentFanCategory !== 'All') return;
+            if (fanScrollTicking) return;
+
+            fanScrollTicking = true;
+            requestAnimationFrame(() => {
+                const filter = document.querySelector('.fan-sticky-filter');
+                const triggerY = (filter?.getBoundingClientRect().bottom || 0) + 24;
+                let activeCategory = 'All';
+
+                document.querySelectorAll('.fan-category-section').forEach(section => {
+                    if (section.getBoundingClientRect().top <= triggerY) {
+                        activeCategory = section.dataset.category || activeCategory;
+                    }
+                });
+
+                setFanActiveButton(activeCategory);
+                fanScrollTicking = false;
+            });
+        }
+
+        function renderFanTable(category = currentFanCategory) {
+            currentFanCategory = category;
+            const data = window.FAN_TABLE || [];
+            const categories = ['All', ...new Set(data.map(item => item.category))];
+            const search = (document.getElementById('fanSearch')?.value || '').trim().toLowerCase();
+            const searchedData = search
+                ? data.filter(item => [item.category, item.name, item.points, item.description].some(value => String(value).toLowerCase().includes(search)))
+                : data;
+            const filtered = category === 'All' ? searchedData : searchedData.filter(item => item.category === category);
+            const bar = document.getElementById('fanCategoryBar');
+            const list = document.getElementById('fanTableList');
+
+            if (!bar || !list) return;
+
+            bar.innerHTML = categories.map(cat => `
+                <button type="button" data-category="${escapeHTML(cat)}" onclick="renderFanTable(this.dataset.category)" class="fan-filter-btn ${cat === category ? 'active' : ''}">
+                    ${cat === 'All' ? '全部' : escapeHTML(cat)}
+                </button>
+            `).join('');
+
+            if (category === 'All') {
+                list.innerHTML = categories.filter(cat => cat !== 'All').map(cat => {
+                    const items = searchedData.filter(item => item.category === cat);
+                    if (!items.length) return '';
+                    return `
+                        <section class="fan-category-section col-span-full space-y-4" data-category="${escapeHTML(cat)}">
+                            <div class="fan-category-heading flex items-center justify-between gap-3">
+                                <h3 class="font-black text-base">${escapeHTML(cat)}</h3>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                ${items.map(fanCardHTML).join('')}
+                            </div>
+                        </section>
+                    `;
+                }).join('') || '<div class="p-10 text-center text-gray-400 font-bold">查無番種</div>';
+            } else {
+                list.innerHTML = filtered.map(fanCardHTML).join('') || '<div class="p-10 text-center text-gray-400 font-bold">查無番種</div>';
+            }
+
+            setFanActiveButton(category);
+            if (category !== 'All') window.scrollTo({ top: document.getElementById('content-fan').offsetTop, behavior: 'smooth' });
+        }
+
+        function toggleFanCard(card) {
+            card.classList.toggle('open');
+        }
+
+        function renderMonthlyChart(monthStats, year) {
+            const canvas = document.getElementById('monthlyChart');
+            const empty = document.getElementById('monthlyChartEmpty');
+            if (!canvas || !empty) return;
+
+            const monthKeys = year === 'All'
+                ? Object.keys(monthStats).sort()
+                : Array.from({ length: 12 }, (_, i) => `${year}-${String(i + 1).padStart(2, '0')}`);
+            const values = monthKeys.map(key => monthStats[key] || 0);
+            const hasData = values.some(value => value !== 0);
+
+            canvas.classList.toggle('hidden', !hasData);
+            empty.classList.toggle('hidden', hasData);
+
+            if (monthlyChart) {
+                monthlyChart.destroy();
+                monthlyChart = null;
+            }
+
+            if (!hasData || typeof Chart === 'undefined') return;
+
+            monthlyChart = new Chart(canvas, {
+                type: 'bar',
+                data: {
+                    labels: monthKeys.map(key => year === 'All' ? key : `${Number(key.slice(5, 7))}月`),
+                    datasets: [{
+                        label: '每月盈虧',
+                        data: values,
+                        backgroundColor: values.map(value => value >= 0 ? 'rgba(16, 185, 129, 0.75)' : 'rgba(220, 38, 38, 0.75)'),
+                        borderWidth: 0,
+                        borderRadius: 8,
+                        borderSkipped: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: context => `盈虧：${formatSigned(context.parsed.y)}`
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { display: false },
+                            ticks: {
+                                color: '#047857',
+                                font: { weight: '900', size: 11 }
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(16, 185, 129, 0.12)' },
+                            ticks: {
+                                color: '#6b7280',
+                                font: { weight: '700', size: 10 },
+                                callback: value => formatSigned(value)
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
         function updateStatus(text, dotClass) {
             document.getElementById('statusText').innerText = text;
             document.getElementById('statusDot').className = `w-2.5 h-2.5 rounded-full ${dotClass}`;
@@ -752,13 +1174,15 @@ function getIdentity(name, stats) {
             // 3. 渲染畫面
             document.getElementById('rankBody').innerHTML = sorted.map(([n, v], idx) => {
                 const rank = idx + 1;
+                const safeName = escapeHTML(n);
+                const safeEmoji = escapeHTML(playerEmojis[n] || '👤');
                 
                 return `
                 <div class="flex justify-between items-center p-6 hover:bg-emerald-50 transition-colors relative">
                     <div class="flex items-center gap-5">
                         <div class="relative">
                             <div class="avatar-frame ${idx < 3 ? 'ring-4 ring-amber-400 crown-anim' : ''}">
-                                ${playerEmojis[n] || '👤'}
+                                ${safeEmoji}
                             </div>
                             <div class="absolute -top-2 -left-2 bg-emerald-800 text-white text-[9px] font-black w-6 h-6 rounded-full flex items-center justify-center shadow-md border-2 border-white">
                                 ${rank}
@@ -766,13 +1190,13 @@ function getIdentity(name, stats) {
                         </div>
                         
                         <div class="flex flex-col">
-                            <span class="font-black text-emerald-800 text-lg">${n}</span>
+                            <span class="font-black text-emerald-800 text-lg">${safeName}</span>
                             <span class="text-[10px] text-gray-500 font-black tracking-widest uppercase">${v.c} 場 • 勝率 ${((v.w/v.c)*100).toFixed(0)}%</span>
                         </div>
                     </div>
                     
                     <span class="font-black font-mono text-2xl ${v.t>=0?'profit':'loss'}">
-                        ${v.t > 0 ? '+' : ''}${v.t}
+                        ${formatSigned(v.t)}
                     </span>
                 </div>`;
             }).join('') || '<div class="p-10 text-center text-gray-400 font-bold">暫無排名紀錄</div>';
@@ -795,11 +1219,16 @@ function getIdentity(name, stats) {
                 });
             });
 
-            const sorted = Object.entries(s).sort((a,b) => b[1].c - a[1].c);
+            const friendSearch = (document.getElementById('friendSearch')?.value || '').trim().toLowerCase();
+            const sorted = Object.entries(s)
+                .filter(([n]) => !friendSearch || n.toLowerCase().includes(friendSearch))
+                .sort((a,b) => b[1].c - a[1].c);
             
             document.getElementById('friendsGrid').innerHTML = sorted.map(([n, v]) => {
                 const iden = getIdentity(n, v);
-                const displayMax = v.max === -Infinity ? "--" : (v.max > 0 ? '+' + v.max : v.max);
+                const safeName = escapeHTML(n);
+                const safeEmoji = escapeHTML(playerEmojis[n] || '👤');
+                const displayMax = v.max === -Infinity ? "--" : formatSigned(v.max);
                 
                 // 2. 出席率分類邏輯 (依照你的要求)
                 let attLabel = "";
@@ -832,12 +1261,12 @@ function getIdentity(name, stats) {
                 <div class="mj-card p-6 flex flex-col justify-between hover:scale-[1.02] transition-transform gold-border">
                     <div>
                         <div class="flex items-center gap-5 mb-6">
-                            <div onclick="openEmojiPickerForPlayer('${n}')" class="avatar-frame cursor-pointer hover:rotate-6 transition-transform relative">
-                                ${playerEmojis[n] || '👤'}
+                            <div data-player="${safeName}" onclick="openEmojiPickerForPlayer(this.dataset.player)" class="avatar-frame cursor-pointer hover:rotate-6 transition-transform relative">
+                                ${safeEmoji}
                             </div>
                             <div class="flex-grow min-w-0">
                                 <div class="flex flex-wrap items-center gap-1.5 mb-1">
-                                    <h3 class="text-xl font-black text-emerald-800">${n}</h3>
+                                    <h3 class="text-xl font-black text-emerald-800">${safeName}</h3>
                                     <span class="px-2 py-0.5 rounded text-[8px] font-black uppercase whitespace-nowrap ${attClass}">${attLabel}</span>
                                     <span class="px-2 py-0.5 rounded text-[8px] font-black uppercase whitespace-nowrap border border-gray-200 text-gray-500">${iden.t}</span>
                                 </div>
@@ -853,13 +1282,13 @@ function getIdentity(name, stats) {
                             <div class="bg-emerald-50/50 p-2 rounded-lg border border-emerald-100">
                                 <p class="text-[8px] font-black text-emerald-600 uppercase mb-1">🔥 貴人</p>
                                 <p class="text-[10px] font-bold text-emerald-800 truncate">
-                                    ${best ? `<span>${playerEmojis[best[0]]||'👤'}</span> ${best[0]} <span class="text-emerald-600 ml-1 font-mono">(+${best[1]})</span>` : '尚未解鎖'}
+                                    ${best ? `<span>${escapeHTML(playerEmojis[best[0]]||'👤')}</span> ${escapeHTML(best[0])} <span class="text-emerald-600 ml-1 font-mono">(${formatSigned(best[1])})</span>` : '尚未解鎖'}
                                 </p>
                             </div>
                             <div class="bg-red-50/50 p-2 rounded-lg border border-red-100">
                                 <p class="text-[8px] font-black text-red-600 uppercase mb-1">💀 天敵</p>
                                 <p class="text-[10px] font-bold text-red-800 truncate">
-                                    ${worst ? `<span>${playerEmojis[worst[0]]||'👤'}</span> ${worst[0]} <span class="text-red-600 ml-1 font-mono">(${worst[1]})</span>` : '尚未解鎖'}
+                                    ${worst ? `<span>${escapeHTML(playerEmojis[worst[0]]||'👤')}</span> ${escapeHTML(worst[0])} <span class="text-red-600 ml-1 font-mono">(${formatSigned(worst[1])})</span>` : '尚未解鎖'}
                                 </p>
                             </div>
                         </div>
@@ -868,29 +1297,32 @@ function getIdentity(name, stats) {
                     <div class="grid grid-cols-2 gap-4 border-t border-emerald-100 pt-6">
                         <div class="flex flex-col"><span class="text-[9px] text-gray-400 font-black uppercase">勝率</span><span class="text-sm font-black text-emerald-700 font-mono">${((v.w/v.c)*100).toFixed(0)}%</span></div>
                         <div class="flex flex-col text-right"><span class="text-[9px] text-gray-400 font-black uppercase">總局數</span><span class="text-sm font-black text-emerald-700 font-mono">${v.c}</span></div>
-                        <div class="flex flex-col"><span class="text-[9px] text-gray-400 font-black uppercase">生涯</span><span class="text-sm font-black font-mono ${v.t>=0?'profit':'loss'}">${v.t>0?'+':''}${v.t}</span></div>
+                        <div class="flex flex-col"><span class="text-[9px] text-gray-400 font-black uppercase">生涯</span><span class="text-sm font-black font-mono ${v.t>=0?'profit':'loss'}">${formatSigned(v.t)}</span></div>
                         <div class="flex flex-col text-right"><span class="text-[9px] text-gray-400 font-black uppercase">最高得分</span><span class="text-sm font-black text-emerald-600 font-mono">${displayMax}</span></div>
                     </div>
                 </div>`;
-            }).join('');
+            }).join('') || '<div class="p-10 text-center text-gray-400 font-bold">查無玩家</div>';
         }
         function renderMeTab() {
     const year = document.getElementById('meYearSel').value;
+    const selectedPlayer = document.getElementById('mePlayerSel').value || DEFAULT_ME_NAME;
+    const selectedPlayerLower = selectedPlayer.toLowerCase();
+    document.getElementById('myNameDisplay').textContent = selectedPlayer;
     
     // 獲取數據
     const myData = games.filter(g => {
         const matchesYear = (year === 'All' || g.date?.includes(year));
         if (!g.players) return false;
-        const hasMe = Object.keys(g.players).some(p => p.toLowerCase() === "yanyi");
+        const hasMe = Object.keys(g.players).some(p => p.toLowerCase() === selectedPlayerLower);
         return matchesYear && hasMe;
     });
 
-    let total = 0, wins = 0, locStats = {}, typeStats = {}, luckMap = {}, typeCount = {};
+    let total = 0, validTotal = 0, wins = 0, locStats = {}, typeStats = {}, luckMap = {}, typeCount = {}, monthStats = {};
     let currentStreak = 0, maxStreak = 0;
     let validScores = []; 
 
     myData.forEach((g) => {
-        const myKey = Object.keys(g.players).find(p => p.toLowerCase() === "yanyi");
+        const myKey = Object.keys(g.players).find(p => p.toLowerCase() === selectedPlayerLower);
         const score = g.players[myKey];
         const type = g.type || "廣東牌";
         
@@ -899,10 +1331,13 @@ function getIdentity(name, stats) {
         locStats[g.location] = (locStats[g.location] || 0) + score;
 
         // 判斷是否為彙總數據
-        const isCumulative = (g.date === '2024-04-27' && g.location === 'yanyi home') || score === 1440;
+        const isCumulative = (selectedPlayerLower === DEFAULT_ME_NAME && g.date === '2024-04-27' && g.location === 'yanyi home') || (selectedPlayerLower === DEFAULT_ME_NAME && score === 1440);
 
         if (!isCumulative) {
             validScores.push(score);
+            validTotal += score;
+            const monthKey = g.date ? g.date.split('T')[0].slice(0, 7) : '';
+            if (monthKey) monthStats[monthKey] = (monthStats[monthKey] || 0) + score;
             
             // 勝率與連勝計算
             if(score > 0) { 
@@ -918,14 +1353,14 @@ function getIdentity(name, stats) {
 
             // 玄學分析（旺我剋我）
             Object.keys(g.players).forEach(p => { 
-                if (p.toLowerCase() !== "yanyi") {
+                if (p.toLowerCase() !== selectedPlayerLower) {
                     luckMap[p] = (luckMap[p] || 0) + score;
                 }
             });
         }
     });
 
-    const avgScore = validScores.length > 0 ? (total / validScores.length).toFixed(1) : 0;
+    const avgScore = validScores.length > 0 ? (validTotal / validScores.length).toFixed(1) : 0;
     const winRate = validScores.length > 0 ? ((wins / validScores.length) * 100).toFixed(0) : 0;
     const highest = validScores.length > 0 ? Math.max(...validScores) : 0;
 
@@ -933,11 +1368,11 @@ function getIdentity(name, stats) {
     document.getElementById('meSummary').innerHTML = `
         <div class="mj-card p-6 text-center border-none shadow-emerald-100 shadow-xl ${total>=0?'profit-card':'loss-card'} card-slide">
             <div class="text-[10px] opacity-80 font-black uppercase tracking-widest">累積盈虧</div>
-            <div class="text-3xl font-black font-mono profit-value">${total>=0?'+':''}${total}</div>
+            <div class="text-3xl font-black font-mono profit-value">${formatSigned(total)}</div>
         </div>
         <div class="mj-card p-6 text-center border-none shadow-xl card-slide" style="animation-delay: 0.1s">
             <div class="text-[10px] text-gray-400 font-black uppercase tracking-widest">單場最高</div>
-            <div class="text-3xl font-black text-emerald-600 font-mono">+${highest}</div>
+            <div class="text-3xl font-black text-emerald-600 font-mono">${formatSigned(highest)}</div>
         </div>
         <div class="mj-card p-6 text-center border-none shadow-xl card-slide" style="animation-delay: 0.2s">
             <div class="text-[10px] text-gray-400 font-black uppercase tracking-widest">勝率</div>
@@ -961,25 +1396,27 @@ function getIdentity(name, stats) {
         if(profitVal) animateNumber(profitVal, total);
     }, 100);
 
+    renderMonthlyChart(monthStats, year);
+
     // 牌型分析
     document.getElementById('meTypeAnalysis').innerHTML = Object.entries(typeStats).map(([t, v]) => `
         <div class="mj-card p-4 text-center border-t-4 ${v>=0?'border-t-emerald-500':'border-t-red-500'}">
             <div class="text-[9px] text-gray-400 font-black uppercase mb-1">${t}</div>
-            <div class="text-lg font-black font-mono ${v>=0?'profit':'loss'}">${v>0?'+':''}${v}</div>
+            <div class="text-lg font-black font-mono ${v>=0?'profit':'loss'}">${formatSigned(v)}</div>
             <div class="text-[8px] text-gray-400 mt-1">${typeCount[t]} 場</div>
         </div>`).join('') || '<p class="col-span-full text-center text-gray-400 text-xs">暫無數據</p>';
 
     // 更新玄學分析 (旺我剋我)
     const sortedLuck = Object.entries(luckMap).sort((a,b) => b[1] - a[1]);
     const luckHTML = (list) => list.map(([n, v]) => {
-        const count = myData.filter(g => g.players && g.players[n] !== undefined && !(g.date === '2024-04-27' && g.location === 'yanyi home')).length;
+        const count = myData.filter(g => g.players && g.players[n] !== undefined && !(selectedPlayerLower === DEFAULT_ME_NAME && g.date === '2024-04-27' && g.location === 'yanyi home')).length;
         return `
         <div class="flex justify-between items-center bg-emerald-50 p-3 rounded-xl border border-emerald-100 mb-2">
             <span class="text-xs font-black text-emerald-700 flex items-center gap-3">
-                <span class="avatar-frame !w-8 !h-10 !text-sm">${playerEmojis[n]||'👤'}</span> ${n}
+                <span class="avatar-frame !w-8 !h-10 !text-sm">${escapeHTML(playerEmojis[n]||'👤')}</span> ${escapeHTML(n)}
             </span>
             <div class="text-right">
-                <div class="text-sm font-black font-mono ${v>=0?'text-emerald-600':'text-red-600'}">${v>0?'+':''}${v}</div>
+                <div class="text-sm font-black font-mono ${v>=0?'text-emerald-600':'text-red-600'}">${formatSigned(v)}</div>
                 <div class="text-[8px] text-gray-400">${count} 場</div>
             </div>
         </div>`;
@@ -991,8 +1428,8 @@ function getIdentity(name, stats) {
     // 地點表現
     document.getElementById('meLocs').innerHTML = Object.entries(locStats).map(([l, v]) => `
         <div class="mj-card p-5 flex justify-between items-center hover:bg-emerald-50/50 transition-colors">
-            <span class="font-black text-emerald-800 flex items-center gap-3"><i class="fa-solid fa-map-location-dot text-emerald-600"></i> ${l}</span>
-            <span class="font-black font-mono text-xl ${v>=0?'profit':'loss'}">${v>0?'+':''}${v}</span>
+            <span class="font-black text-emerald-800 flex items-center gap-3"><i class="fa-solid fa-map-location-dot text-emerald-600"></i> ${escapeHTML(l)}</span>
+            <span class="font-black font-mono text-xl ${v>=0?'profit':'loss'}">${formatSigned(v)}</span>
         </div>`).join('');
 }
 
@@ -1003,8 +1440,8 @@ function getIdentity(name, stats) {
                 let pSum = 0; filtered.forEach(g => pSum += g.players[pFilt]);
                 document.getElementById('playerStatsCard').innerHTML = `
                     <div class="mj-card p-6 text-white mb-6 flex justify-between items-center border-none shadow-emerald-200 shadow-xl ${pSum>=0?'profit-card':'loss-card'}">
-                        <div><div class="text-[10px] opacity-80 font-black uppercase tracking-widest">${pFilt} 盈虧</div><div class="text-4xl font-black font-mono">${pSum > 0 ? '+' : ''}${pSum}</div></div>
-                        <div class="avatar-frame text-4xl">${playerEmojis[pFilt]||'👤'}</div>
+                        <div><div class="text-[10px] opacity-80 font-black uppercase tracking-widest">${escapeHTML(pFilt)} 盈虧</div><div class="text-4xl font-black font-mono">${formatSigned(pSum)}</div></div>
+                        <div class="avatar-frame text-4xl">${escapeHTML(playerEmojis[pFilt]||'👤')}</div>
                     </div>`;
                 document.getElementById('playerStatsCard').classList.remove('hidden');
             } else { document.getElementById('playerStatsCard').classList.add('hidden'); }
@@ -1012,29 +1449,43 @@ function getIdentity(name, stats) {
             document.getElementById('historyList').innerHTML = filtered.map(g => `
                 <div class="mj-card p-6 relative">
                     <div class="flex justify-between text-[10px] text-gray-400 mb-5 font-black uppercase tracking-widest">
-                        <span>📅 ${g.date?.split('T')[0]}</span>
-                        <span>📍 ${g.location}</span>
+                        <span>📅 ${escapeHTML(g.date?.split('T')[0])}</span>
+                        <span>📍 ${escapeHTML(g.location)}</span>
                     </div>
                     <div class="mb-4">
-                        <span class="type-tag">${g.type || '廣東牌'}</span>
+                        <span class="type-tag">${escapeHTML(g.type || '廣東牌')}</span>
                     </div>
                     <div class="grid grid-cols-2 gap-3">
                         ${g.players ? Object.entries(g.players).map(([n, v]) => `
                             <div class="p-3 rounded-xl ${n===pFilt ? 'bg-emerald-600 text-white ring-4 ring-emerald-100' : 'bg-emerald-50 border border-emerald-100'} flex justify-between items-center">
                                 <span class="text-xs font-black flex items-center gap-2">
-                                    <span class="avatar-frame !w-6 !h-8 !text-sm">${playerEmojis[n]||'👤'}</span> ${n}
+                                    <span class="avatar-frame !w-6 !h-8 !text-sm">${escapeHTML(playerEmojis[n]||'👤')}</span> ${escapeHTML(n)}
                                 </span>
-                                <span class="font-black font-mono ${n===pFilt ? 'text-white' : (v>=0?'profit':'loss')}">${v>0?'+':''}${v}</span>
+                                <span class="font-black font-mono ${n===pFilt ? 'text-white' : (v>=0?'profit':'loss')}">${formatSigned(v)}</span>
                             </div>`).join('') : ''}
                     </div>
                 </div>`).join('') || '<div class="p-10 text-center text-gray-400 font-bold">查無對局紀錄</div>';
         }
 
         async function saveGame() {
-            const date = document.getElementById('gDate').value, loc = document.getElementById('gLoc').value, type = document.getElementById('gType').value;
+            const date = document.getElementById('gDate').value, loc = document.getElementById('gLoc').value.trim(), type = document.getElementById('gType').value;
             const pNames = document.querySelectorAll('.pn'), pScores = document.querySelectorAll('.ps');
-            let players = {}; pNames.forEach((n, i) => { if(n.value) players[n.value] = parseFloat(pScores[i].value || 0); });
+            let players = {};
+            let duplicateName = false;
+            let invalidScore = false;
+            pNames.forEach((n, i) => {
+                const name = n.value.trim();
+                if (!name) return;
+                const score = parseFloat(pScores[i].value);
+                if (players[name] !== undefined) duplicateName = true;
+                if (Number.isNaN(score)) invalidScore = true;
+                players[name] = score;
+            });
+            const totalScore = Object.values(players).reduce((sum, score) => sum + score, 0);
             if(!date || !loc || Object.keys(players).length < 4) return alert("請填寫完整資料");
+            if(duplicateName) return alert("玩家名字不能重複");
+            if(invalidScore) return alert("請為每位玩家填寫有效分數");
+            if(Math.abs(totalScore) > 0.001) return alert("四位玩家分數加起來應該等於 0");
             const btn = document.getElementById('saveBtn'); btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 儲存中...';
             try {
                 await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "addGame", date, location: loc, type, players }) });
@@ -1043,12 +1494,13 @@ function getIdentity(name, stats) {
         }
 
         function switchTab(t) {
-            ['rank', 'friends', 'me', 'history'].forEach(id => {
+            ['rank', 'friends', 'me', 'history', 'fan'].forEach(id => {
                 const content = document.getElementById('content-'+id);
                 if (content) content.classList.toggle('hidden', id !== t);
                 const btn = document.getElementById('btn-'+id);
                 if (btn) btn.className = id === t ? 'tab-btn tab-active' : 'tab-btn';
             });
+            if (t === 'fan') renderFanTable();
         }
 
         function toggleInput() { 
@@ -1080,9 +1532,9 @@ function getIdentity(name, stats) {
             const container = document.getElementById('playerQuickSelect');
             if(container) {
                 container.innerHTML = topPlayers.map(n => `
-                    <button type="button" onclick="quickAddPlayer('${n}')" class="player-quick-btn hover:shadow-lg transition-all">
-                        <span class="emoji">${playerEmojis[n] || '👤'}</span>
-                        <span>${n}</span>
+                    <button type="button" data-player="${escapeHTML(n)}" onclick="quickAddPlayer(this.dataset.player)" class="player-quick-btn hover:shadow-lg transition-all">
+                        <span class="emoji">${escapeHTML(playerEmojis[n] || '👤')}</span>
+                        <span>${escapeHTML(n)}</span>
                     </button>`).join('');
             }
         }
@@ -1116,13 +1568,13 @@ function getIdentity(name, stats) {
             games.forEach(g => { if(g.location) locs.add(g.location); });
             const locArray = Array.from(locs).sort().slice(0, 6);
             document.getElementById('locQuickSelect').innerHTML = locArray.map(l => `
-                <button type="button" onclick="quickSelectLocation('${l}')" class="location-quick-btn">${l}</button>`).join('');
+                <button type="button" data-location="${escapeHTML(l)}" onclick="quickSelectLocation(this.dataset.location, this)" class="location-quick-btn">${escapeHTML(l)}</button>`).join('');
         }
 
-        function quickSelectLocation(loc) {
+        function quickSelectLocation(loc, btn) {
             document.getElementById('gLoc').value = loc;
-            document.querySelectorAll('.location-quick-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
+            document.querySelectorAll('.location-quick-btn').forEach(item => item.classList.remove('active'));
+            btn.classList.add('active');
         }
         function openEmojiPicker(idx) { currentTargetInputIdx = idx; currentEditingPlayer = null; document.getElementById('emojiPicker').classList.remove('hidden'); }
         function openEmojiPickerForPlayer(name) { currentEditingPlayer = name; currentTargetInputIdx = null; document.getElementById('emojiPicker').classList.remove('hidden'); }
@@ -1181,17 +1633,25 @@ function getIdentity(name, stats) {
             const yearArray = Array.from(years).sort().reverse();
             const locArray = Array.from(locs).sort();
             const pArray = Array.from(players).sort();
+            const currentMeYear = document.getElementById('meYearSel').value || 'All';
+            const currentMePlayer = document.getElementById('mePlayerSel').value || '';
+            const defaultPlayer = pArray.find(p => p.toLowerCase() === DEFAULT_ME_NAME) || pArray[0] || DEFAULT_ME_NAME;
             
             document.getElementById('rankYearSel').innerHTML = '<option value="All">所有年份</option>' + yearArray.map(y => `<option value="${y}">${y} 年</option>`).join('');
-            document.getElementById('rankLocSel').innerHTML = '<option value="All">所有地點</option>' + locArray.map(l => `<option value="${l}">${l}</option>`).join('');
-            document.getElementById('filtLoc').innerHTML = '<option value="">📍 選擇地點</option>' + locArray.map(l => `<option value="${l}">${l}</option>`).join('');
-            document.getElementById('filtPlayer').innerHTML = '<option value="">👤 選擇玩家</option>' + pArray.map(p => `<option value="${p}">${p}</option>`).join('');
-            document.getElementById('locs').innerHTML = locArray.map(l => `<option value="${l}">`).join('');
+            document.getElementById('mePlayerSel').innerHTML = pArray.map(p => `<option value="${escapeHTML(p)}">${escapeHTML(p)}</option>`).join('');
+            document.getElementById('mePlayerSel').value = pArray.includes(currentMePlayer) ? currentMePlayer : defaultPlayer;
+            document.getElementById('meYearSel').innerHTML = '<option value="All">所有年份</option>' + yearArray.map(y => `<option value="${y}">${y} 年</option>`).join('');
+            document.getElementById('meYearSel').value = yearArray.includes(currentMeYear) ? currentMeYear : 'All';
+            document.getElementById('rankLocSel').innerHTML = '<option value="All">所有地點</option>' + locArray.map(l => `<option value="${escapeHTML(l)}">${escapeHTML(l)}</option>`).join('');
+            document.getElementById('filtLoc').innerHTML = '<option value="">📍 選擇地點</option>' + locArray.map(l => `<option value="${escapeHTML(l)}">${escapeHTML(l)}</option>`).join('');
+            document.getElementById('filtPlayer').innerHTML = '<option value="">👤 選擇玩家</option>' + pArray.map(p => `<option value="${escapeHTML(p)}">${escapeHTML(p)}</option>`).join('');
+            document.getElementById('locs').innerHTML = locArray.map(l => `<option value="${escapeHTML(l)}">`).join('');
             
-            renderRankTab(); renderFriends(); renderMeTab(); renderHistory();
+            renderRankTab(); renderFriends(); renderMeTab(); renderHistory(); renderFanTable();
         }
 
         document.getElementById('emojiGrid').innerHTML = EMOJI_LIST.map(e => `<div onclick="selectEmoji('${e}')" class="p-3 text-center rounded-xl cursor-pointer text-3xl transition-transform hover:scale-110">${e}</div>`).join('');
+        window.addEventListener('scroll', handleFanScroll, { passive: true });
         window.onload = () => { fetchGames(); };
     </script>
 </body>
