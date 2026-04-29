@@ -207,6 +207,8 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            display: inline-block;
+            padding-bottom: 0.08em;
         }
 
         @media (max-width: 640px) {
@@ -230,9 +232,10 @@
             scroll-behavior: smooth;
         }
 
-        /* 禁止內容區块左右滑動 */
+        /* 內容區保留卡片陰影，不裁側邊 */
         [id^="content-"] {
-            overflow-x: hidden !important;
+            min-width: 0;
+            overflow: visible !important;
         }
 
         /* 動畫定義 */
@@ -355,20 +358,29 @@
         }
 
         .fan-sticky-filter {
-            position: sticky;
-            top: 0;
-            z-index: 80;
+            position: relative;
+            z-index: 25;
             background: rgba(255, 255, 255, 0.96);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
-            padding: 10px 0;
+            padding: 14px 0 12px;
             border-bottom: 1px solid #d1fae5;
             box-shadow: 0 8px 18px rgba(16, 185, 129, 0.08);
         }
 
+        .fan-sticky-placeholder {
+            display: none;
+            height: 0;
+        }
+
+        .fan-sticky-filter.is-fixed {
+            position: fixed;
+            top: 0;
+            z-index: 60;
+        }
+
         #content-fan {
             overflow: visible !important;
-            overflow-x: hidden !important;
         }
 
         #content-fan,
@@ -378,7 +390,7 @@
         }
 
         .fan-category-section {
-            scroll-margin-top: 76px;
+            scroll-margin-top: 92px;
         }
 
         .fan-category-heading {
@@ -404,6 +416,8 @@
 
         .search-box input {
             padding-left: 44px !important;
+            margin: 0 !important;
+            width: 100% !important;
         }
 
         .fan-detail {
@@ -411,6 +425,38 @@
             overflow: hidden;
             opacity: 0;
             transition: all 0.25s ease;
+        }
+
+        .fan-card {
+            padding: 12px !important;
+        }
+
+        .fan-card h3 {
+            font-size: 0.92rem;
+            line-height: 1.2;
+        }
+
+        .fan-card .text-xl {
+            font-size: 1rem !important;
+            line-height: 1;
+        }
+
+        .fan-category-heading {
+            padding: 8px 12px;
+        }
+
+        @media (max-width: 640px) {
+            .fan-card {
+                padding: 10px !important;
+            }
+
+            .fan-card h3 {
+                font-size: 0.82rem;
+            }
+
+            .fan-card .text-xl {
+                font-size: 0.92rem !important;
+            }
         }
 
         .fan-card.open .fan-detail {
@@ -509,6 +555,11 @@
             position: relative;
         }
 
+        .mini-chart-box {
+            height: 220px;
+            position: relative;
+        }
+
         @media (max-width: 640px) {
             .input-form-grid {
                 grid-template-columns: 1fr;
@@ -518,13 +569,13 @@
             .monthly-chart-box {
                 height: 240px;
             }
+
+            .mini-chart-box {
+                height: 210px;
+            }
         }
 
         /* Layout trial: compact app-style navigation */
-        body {
-            padding-bottom: 116px;
-        }
-
         body > .max-w-4xl {
             padding-top: 22px;
             overflow-x: hidden;
@@ -537,7 +588,7 @@
 
         header h1 {
             font-size: 2.4rem !important;
-            line-height: 1.05;
+            line-height: 1.12;
         }
 
         header h1 span:first-child,
@@ -551,66 +602,103 @@
             border-radius: 999px;
         }
 
-        nav {
-            position: fixed;
-            left: 12px;
-            right: 12px;
-            width: calc(100vw - 24px);
-            max-width: calc(100vw - 24px);
-            bottom: max(12px, env(safe-area-inset-bottom));
-            z-index: 70;
-            display: grid !important;
-            grid-template-columns: repeat(5, minmax(0, 1fr));
-            gap: 4px !important;
-            padding: 8px;
-            margin: 0 !important;
-            background: rgba(255, 255, 255, 0.96);
-            border: 1px solid #d1fae5 !important;
-            border-radius: 18px;
-            box-shadow: 0 14px 30px rgba(6, 95, 70, 0.16);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
-            overflow-x: visible !important;
-        }
-
-        .tab-btn {
-            min-width: 0;
-            padding: 8px 4px !important;
-            border-bottom: 0 !important;
-            border-radius: 12px;
-            font-size: 10px;
-            line-height: 1.1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
-            color: #6b7280;
-        }
-
-        .tab-btn::before {
-            font-family: "Font Awesome 6 Free";
-            font-weight: 900;
-            font-size: 16px;
-            line-height: 1;
-        }
-
-        #btn-rank::before { content: "\f521"; }
-        #btn-friends::before { content: "\f0c0"; }
-        #btn-me::before { content: "\f201"; }
-        #btn-history::before { content: "\f1da"; }
-        #btn-fan::before { content: "\f03a"; }
-
-        .tab-active {
-            background: #d1fae5;
-            color: #047857 !important;
-            border-bottom: 0 !important;
-        }
-
         @media (max-width: 640px) {
+            body {
+                padding-bottom: 116px;
+            }
+
             body > .max-w-4xl {
                 padding-left: 14px;
                 padding-right: 14px;
+            }
+
+            nav {
+                position: fixed;
+                left: 12px;
+                right: 12px;
+                bottom: max(12px, env(safe-area-inset-bottom));
+                z-index: 70;
+                display: grid !important;
+                grid-template-columns: repeat(5, minmax(0, 1fr));
+                gap: 4px !important;
+                padding: 8px;
+                margin: 0 !important;
+                background: rgba(255, 255, 255, 0.96);
+                border: 1px solid #d1fae5 !important;
+                border-radius: 18px;
+                box-shadow: 0 14px 30px rgba(6, 95, 70, 0.16);
+                backdrop-filter: blur(14px);
+                -webkit-backdrop-filter: blur(14px);
+                overflow-x: visible !important;
+            }
+
+            .tab-btn {
+                min-width: 0;
+                padding: 8px 4px !important;
+                border-bottom: 0 !important;
+                border-radius: 12px;
+                font-size: 10px;
+                line-height: 1.1;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 4px;
+                color: #6b7280;
+                border: 1px solid transparent;
+            }
+
+            .tab-btn::before {
+                font-family: "Font Awesome 6 Free";
+                font-weight: 900;
+                font-size: 16px;
+                line-height: 1;
+            }
+
+            #btn-rank::before { content: "\f521"; }
+            #btn-friends::before { content: "\f0c0"; }
+            #btn-me::before { content: "\f201"; }
+            #btn-history::before { content: "\f1da"; }
+            #btn-fan::before { content: "\f03a"; }
+
+            .tab-active {
+                color: #047857 !important;
+                border-bottom: 0 !important;
+                transform: translateY(-1px);
+            }
+
+            #btn-rank.tab-active {
+                background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+                border-color: #a7f3d0;
+                box-shadow: 0 4px 10px rgba(16, 185, 129, 0.10);
+            }
+
+            #btn-friends.tab-active {
+                background: linear-gradient(135deg, #eff6ff, #dbeafe);
+                color: #2563eb !important;
+                border-color: #bfdbfe;
+                box-shadow: 0 4px 10px rgba(59, 130, 246, 0.10);
+            }
+
+            #btn-me.tab-active {
+                background: linear-gradient(135deg, #fffbeb, #fef3c7);
+                color: #b45309 !important;
+                border-color: #fde68a;
+                box-shadow: 0 4px 10px rgba(245, 158, 11, 0.10);
+            }
+
+            #btn-history.tab-active {
+                background: linear-gradient(135deg, #fef2f2, #fee2e2);
+                color: #dc2626 !important;
+                border-color: #fecaca;
+                box-shadow: 0 4px 10px rgba(239, 68, 68, 0.10);
+            }
+
+            #btn-fan.tab-active {
+                background: linear-gradient(135deg, #f5f3ff, #ede9fe);
+                color: #7c3aed !important;
+                border-color: #ddd6fe;
+                box-shadow: 0 4px 10px rgba(124, 58, 237, 0.10);
             }
 
             header h1 {
@@ -634,6 +722,10 @@
                 width: 48px !important;
                 height: 48px !important;
                 font-size: 1.1rem !important;
+            }
+
+            .fan-category-section {
+                scroll-margin-top: 100px;
             }
         }
     </style>
@@ -723,9 +815,23 @@
             
             <div class="space-y-4">
                 <h3 class="font-black text-lg text-emerald-700 px-1 flex items-center gap-2">
-                    <i class="fa-solid fa-chart-pie text-emerald-600"></i> 牌型盈虧分析
+                    <i class="fa-solid fa-chart-pie text-emerald-600"></i> 牌型分析
                 </h3>
-                <div id="meTypeAnalysis" class="grid grid-cols-2 sm:grid-cols-3 gap-4"></div>
+                <div class="space-y-4">
+                    <div>
+                        <p class="text-[11px] font-black text-emerald-600 uppercase tracking-widest px-1 mb-3">牌型盈虧</p>
+                        <div id="meTypeAnalysis" class="grid grid-cols-2 sm:grid-cols-3 gap-4"></div>
+                    </div>
+                    <div>
+                        <p class="text-[11px] font-black text-emerald-600 uppercase tracking-widest px-1 mb-3">牌型出場次數</p>
+                        <div class="mj-card p-5 gold-border">
+                            <div class="mini-chart-box">
+                                <canvas id="typeCountChart"></canvas>
+                            </div>
+                            <p id="typeCountChartEmpty" class="hidden text-center text-gray-400 text-xs font-bold py-8">暫無牌型統計</p>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -768,8 +874,9 @@
                 <i class="fa-solid fa-magnifying-glass"></i>
                 <input id="fanSearch" type="search" oninput="renderFanTable(currentFanCategory)" placeholder="搜尋番種、類別或解釋..." class="outline-none !py-3 !text-sm">
             </div>
-            <div class="fan-sticky-filter -mx-5 px-5">
-                <div id="fanCategoryBar" class="flex gap-2 overflow-x-auto pb-2"></div>
+            <div id="fanStickyPlaceholder" class="fan-sticky-placeholder"></div>
+            <div id="fanStickyFilter" class="fan-sticky-filter">
+                <div id="fanCategoryBar" class="flex gap-2 overflow-x-auto pb-1"></div>
             </div>
             <div id="fanTableList" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
         </div>
@@ -844,6 +951,7 @@
     <datalist id="allPlayersList"></datalist>
 
     <script src="fan-table-data.js"></script>
+    <script src="identity-data.js"></script>
     <script>
         const API_URL = "https://script.google.com/macros/s/AKfycbxjcsKfsDT_O1dwdatSem-iVDgznptK2IVwoJeqVQjQGIs5wS1owDlzRHLNebr-vTYB2Q/exec";
         const DEFAULT_ME_NAME = "yanyi"; 
@@ -854,94 +962,82 @@
         let currentTargetInputIdx = null;
         let currentEditingPlayer = null;
         let monthlyChart = null;
+        let typeCountChart = null;
 
-        const IDENTITY_POOLS = {
-    GOD: [
-        { t: "自摸神手", q: "唔好意思呀，我又自摸喇，你哋快啲比錢啦。", c: "bg-indigo-100 text-indigo-700" },
-        { t: "中環雀王", q: "今晚全場我買單，邊個都唔准同我爭！", c: "bg-amber-100 text-amber-700" },
-        { t: "至尊雀聖", q: "你同我鬥，不如直接將銀包遞畀我啦。", c: "bg-yellow-100 text-yellow-700" },
-        { t: "冷面雀神", q: "牌局如戰場，我唔會對任何人心軟。", c: "bg-slate-800 text-white" },
-        { t: "傳奇十三么", q: "大牌唔係你想做就有，係要天意配合。", c: "bg-purple-100 text-purple-700" },
-        { t: "不敗神話", q: "求一敗而不可得，寂寞係我嘅代稱。", c: "bg-yellow-500 text-white" },
-        { t: "雀界攞命陳", q: "我唔係針對邊個，我係話在座各位都係畀錢我使。", c: "bg-red-600 text-white" },
-        { t: "通殺大將軍", q: "一家贏三家，你哋啲錢我幫你儲埋先。", c: "bg-orange-600 text-white" },
-        { t: "贏到驚星人", q: "贏到我自己都唔好意思，下次再贏過。", c: "bg-pink-600 text-white" },
-        { t: "無敵破壞王", q: "我一坐低，呢張檯就注定要爆。", c: "bg-rose-700 text-white" }
-    ],
-    WINNER: [
-        { t: "截胡專家", q: "想食大牌？問過我先啦，我就係鍾意截你胡。", c: "bg-emerald-100 text-emerald-700" },
-        { t: "碰碰車神", q: "碰！碰！碰！碰多兩下你就清袋㗎喇。", c: "bg-blue-100 text-blue-700" },
-        { t: "連莊霸主", q: "坐得呢個位就唔打算起身，冧莊冧到你驚。", c: "bg-teal-100 text-teal-700" },
-        { t: "食糊機器", q: "贏錢只係其次，我最享受係推牌果下聲。", c: "bg-green-100 text-green-700" },
-        { t: "牌桌獵人", q: "我已經盯住你隻生章好耐喇。", c: "bg-orange-100 text-orange-700" },
-        { t: "技術型雀友", q: "打牌要講科學，計算先係王道。", c: "bg-blue-50 text-blue-600" },
-        { t: "收割機", q: "鋤強扶弱我就唔識，我淨係識收割。", c: "bg-emerald-600 text-white" },
-        { t: "食腦玩家", q: "你打運，我打命，你點同我鬥？", c: "bg-lime-600 text-white" },
-        { t: "截牌老司機", q: "你想食嗰隻牌，一早喺我對手入面。", c: "bg-cyan-600 text-white" },
-        { t: "單吊之鬼", q: "單吊至係男人的浪漫，你識咩呀？", c: "bg-indigo-600 text-white" }
-    ],
-    NORMAL: [
-        { t: "資深雀骨", q: "摸多隻，等埋呢隻，我就自摸㗎喇！", c: "bg-slate-100 text-slate-600" },
-        { t: "穩陣派宗師", q: "唔求贏大錢，最緊要唔好輸大牌。", c: "bg-gray-100 text-gray-700" },
-        { t: "摸牌達人", q: "呢隻牌，一摸落手就知係我想要個隻。", c: "bg-cyan-100 text-cyan-700" },
-        { t: "隱世雀傑", q: "平時唔出聲，一出手就嚇死你。", c: "bg-zinc-100 text-zinc-700" },
-        { t: "雀壇中堅", q: "有我喺度，個場就唔會悶。", c: "bg-sky-50 text-sky-600" },
-        { t: "快手雀友", q: "打快啲啦，諗咁耐個發財都唔會變白板。", c: "bg-lime-100 text-lime-700" },
-        { t: "太極高手", q: "以柔制剛，輸贏都係幾草嘢。", c: "bg-stone-100 text-stone-600" },
-        { t: "守門員", q: "我坐喺呢個位，就係要守住大家份糧。", c: "bg-neutral-200 text-neutral-700" },
-        { t: "牌桌佛系男", q: "不求食糊，不求自摸，緣份到自然會贏。", c: "bg-orange-50 text-orange-700" },
-        { t: "觀察家", q: "我睇穿晒你哋啲牌，不過我唔講。", c: "bg-slate-200 text-slate-800" }
-    ],
-    LOSER: [
-        { t: "慈善大翁", q: "輸錢皆因贏錢起，我只係暫時將啲錢放喺你度。", c: "bg-rose-100 text-rose-700" },
-        { t: "交學費大師", q: "我係嚟交學費嘅，各位前輩手下留情呀。", c: "bg-red-50 text-red-600" },
-        { t: "外賣專員", q: "大家開開心心打牌，最緊要宵夜好食。", c: "bg-pink-100 text-pink-700" },
-        { t: "地獄黑仔王", q: "摸親都係花，打親都被截，天理何在？", c: "bg-stone-200 text-stone-700" },
-        { t: "牌桌明燈", q: "跟住我打對家就實無錯喇。", c: "bg-yellow-50 text-yellow-600" },
-        { t: "積極參與者", q: "贏輸唔重要，最緊要有得打。", c: "bg-orange-50 text-orange-600" },
-        { t: "散財童子", q: "今日我請，大家隨便食，隨便贏。", c: "bg-red-100 text-red-800" },
-        { t: "人肉提款機", q: "密碼係 1234，大家隨便撳。", c: "bg-blue-200 text-blue-900" },
-        { t: "氣氛組組長", q: "雖然我輸錢，但係我講笑話好笑呀！", c: "bg-yellow-100 text-yellow-800" },
-        { t: "最後的溫柔", q: "我就係專登出銃畀你，費事你冇錢返屋企。", c: "bg-pink-50 text-pink-600" }
-    ],
-    NOOB: [
-        { t: "雀壇新丁", q: "邊隻係一筒話？我仲分唔清...", c: "bg-slate-50 text-slate-400" },
-        { t: "觀察員", q: "我睇多兩鋪先，你哋打先啦。", c: "bg-stone-50 text-stone-400" },
-        { t: "潛力股", q: "等我學成歸來，實贏返晒你哋。", c: "bg-violet-50 text-violet-500" },
-        { t: "幸運小草", q: "亂打亂撞，竟然比我食到個亂碟。", c: "bg-green-50 text-green-500" },
-        { t: "熱情新手", q: "再黎一局！我開始掌握到規律喇！", c: "bg-amber-50 text-amber-500" },
-        { t: "陪跑專員", q: "我今日黎主要係負責洗牌同埋比錢。", c: "bg-gray-50 text-gray-400" },
-        { t: "路過英雄", q: "我只係路過，點知比你哋拉咗入嚟打。", c: "bg-zinc-100 text-zinc-500" },
-        { t: "學徒", q: "師父話齋，未贏錢先要學識輸錢。", c: "bg-emerald-50 text-emerald-500" },
-        { t: "實習雀友", q: "實習期內，請大家多多指教。", c: "bg-blue-50 text-blue-400" },
-        { t: "純情小白兔", q: "你哋啲牌咁複雜，我睇唔透呀。", c: "bg-rose-50 text-rose-400" }
-    ]
-};
-function getIdentity(name, stats) {
+        function stableHash(input) {
+            return String(input).split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+        }
+
+        function getIdentityBand(stats) {
             const score = stats.t;
-            const winRate = (stats.w / stats.c) * 100;
+            const winRate = stats.c ? (stats.w / stats.c) * 100 : 0;
             const count = stats.c;
-            
-            // 使用 Hash 確保同一個人在同一區間內的稱號是唯一的
-            const hash = name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-            
-            let pool;
 
-            // 實力區間判定 (你的 Condition)
-            if (score >= 800 || (count >= 15 && winRate >= 65)) {
-                pool = IDENTITY_POOLS.GOD;
-            } else if (score >= 150 || (winRate >= 50 && score > 0)) {
-                pool = IDENTITY_POOLS.WINNER;
-            } else if (score <= -500) {
-                pool = IDENTITY_POOLS.LOSER;
-            } else if (count < 3) {
-                pool = IDENTITY_POOLS.NOOB;
-            } else {
-                pool = IDENTITY_POOLS.NORMAL;
+            if (count < 3) return 'NOOB';
+            if (score >= 1000 || (count >= 15 && winRate >= 62) || (score >= 600 && winRate >= 58 && count >= 10)) return 'GOD';
+            if (score >= 180 || (count >= 6 && winRate >= 55 && score > 0) || (score >= 80 && winRate >= 60 && count >= 10)) return 'WINNER';
+            if (score <= -350 || (count >= 8 && winRate < 35) || (score <= -180 && winRate < 40 && count >= 10)) return 'LOSER';
+            return 'NORMAL';
+        }
+
+        function getIdentityTrait(stats) {
+            const score = stats.t;
+            const winRate = stats.c ? (stats.w / stats.c) * 100 : 0;
+            const avgScore = stats.c ? score / stats.c : 0;
+            const maxScore = stats.max === -Infinity ? 0 : stats.max;
+            const count = stats.c;
+
+            if (count < 4) return 'rookie';
+            if (count >= 25) return 'grinder';
+            if (maxScore >= 160) return 'explosive';
+            if (winRate >= 62) return 'shark';
+            if (avgScore >= 35) return 'hot';
+            if (winRate >= 45 && winRate <= 55) return 'steady';
+            if (score < 0 && winRate < 38) return 'chaos';
+            return 'observer';
+        }
+
+        function getIdentity(name, stats, usedTitles = new Set()) {
+            const data = window.IDENTITY_DATA || { pools: {} };
+            const band = getIdentityBand(stats);
+            const trait = getIdentityTrait(stats);
+            const bandPool = data.pools?.[band] || [];
+            const scoreMap = bandPool.map(item => {
+                const tags = item.tags || [];
+                let score = 0;
+                if (tags.includes(trait)) score += 3;
+                if (tags.includes('grinder') && stats.c >= 20) score += 1;
+                if (tags.includes('rookie') && stats.c < 5) score += 1;
+                if (tags.includes('explosive') && stats.max >= 140) score += 1;
+                if (tags.includes('steady') && stats.c > 0 && Math.abs(stats.t / stats.c) < 25) score += 1;
+                if (tags.includes('hot') && stats.c > 0 && (stats.t / stats.c) >= 30) score += 1;
+                if (tags.includes('shark') && stats.c > 0 && ((stats.w / stats.c) * 100) >= 58) score += 1;
+                if (tags.includes('chaos') && stats.c > 0 && ((stats.w / stats.c) * 100) < 42) score += 1;
+                if (tags.includes('observer') && stats.c >= 6 && stats.max < 140) score += 1;
+                return { item, score };
+            });
+
+            const rankedPool = scoreMap
+                .sort((a, b) => {
+                    if (b.score !== a.score) return b.score - a.score;
+                    return stableHash(`${name}-${a.item.t}`) - stableHash(`${name}-${b.item.t}`);
+                })
+                .map(entry => entry.item);
+
+            const finalPool = rankedPool.length ? rankedPool : bandPool;
+            const startIndex = stableHash(`${name}-${band}-${trait}-${stats.c}-${stats.t}`) % finalPool.length;
+            let chosen = finalPool[startIndex];
+
+            for (let i = 0; i < finalPool.length; i++) {
+                const candidate = finalPool[(startIndex + i) % finalPool.length];
+                if (!usedTitles.has(candidate.t)) {
+                    chosen = candidate;
+                    break;
+                }
             }
 
-            // 從對應的池子中取出稱號
-            return pool[hash % pool.length];
+            usedTitles.add(chosen.t);
+            return { ...chosen, band, trait };
         }
         async function fetchGames() {
     // 1. 先從瀏覽器「小冰箱」(localStorage) 檢查有沒有舊資料
@@ -1002,16 +1098,55 @@ function getIdentity(name, stats) {
 
         let currentFanCategory = 'All';
         let fanScrollTicking = false;
+        let currentActiveFanButton = 'All';
+
+        function updateFanStickyBar() {
+            const content = document.getElementById('content-fan');
+            const filter = document.getElementById('fanStickyFilter');
+            const placeholder = document.getElementById('fanStickyPlaceholder');
+            if (!content || !filter || !placeholder) return;
+
+            const isFanVisible = !content.classList.contains('hidden');
+            if (!isFanVisible) {
+                filter.classList.remove('is-fixed');
+                filter.style.left = '';
+                filter.style.width = '';
+                placeholder.style.display = 'none';
+                placeholder.style.height = '0px';
+                return;
+            }
+
+            const filterRect = filter.getBoundingClientRect();
+            const placeholderRect = placeholder.getBoundingClientRect();
+            const shouldFix = filter.classList.contains('is-fixed')
+                ? placeholderRect.top <= 0
+                : filterRect.top <= 0;
+
+            if (shouldFix) {
+                const contentRect = content.getBoundingClientRect();
+                filter.classList.add('is-fixed');
+                filter.style.left = `${contentRect.left}px`;
+                filter.style.width = `${contentRect.width}px`;
+                placeholder.style.display = 'block';
+                placeholder.style.height = `${filter.offsetHeight}px`;
+            } else {
+                filter.classList.remove('is-fixed');
+                filter.style.left = '';
+                filter.style.width = '';
+                placeholder.style.display = 'none';
+                placeholder.style.height = '0px';
+            }
+        }
 
         function fanCardHTML(item) {
             return `
                 <button type="button" onclick="toggleFanCard(this)" class="fan-card mj-card p-4 text-left hover:bg-emerald-50 transition-colors">
                     <div class="flex items-start justify-between gap-3">
                         <div class="min-w-0">
-                            <h3 class="font-black text-base text-emerald-800">${escapeHTML(item.name)}</h3>
+                            <h3 class="font-black text-sm text-emerald-800">${escapeHTML(item.name)}</h3>
                         </div>
                         <div class="flex-shrink-0 text-right">
-                            <div class="text-xl font-black font-mono text-emerald-600">${escapeHTML(item.points)}</div>
+                            <div class="text-lg font-black font-mono text-emerald-600">${escapeHTML(item.points)}</div>
                         </div>
                     </div>
                     <div class="fan-detail text-xs text-gray-600 leading-relaxed border-t border-emerald-100">
@@ -1022,21 +1157,42 @@ function getIdentity(name, stats) {
         }
 
         function setFanActiveButton(category) {
+            const bar = document.getElementById('fanCategoryBar');
+            let activeBtn = null;
             document.querySelectorAll('.fan-filter-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.category === category);
+                const isActive = btn.dataset.category === category;
+                btn.classList.toggle('active', isActive);
+                if (isActive) activeBtn = btn;
             });
-            const active = Array.from(document.querySelectorAll('.fan-filter-btn')).find(btn => btn.dataset.category === category);
-            if (active) active.scrollIntoView({ behavior: 'auto', inline: 'center', block: 'nearest' });
+
+            if (bar && activeBtn) {
+                const barRect = bar.getBoundingClientRect();
+                const btnRect = activeBtn.getBoundingClientRect();
+                const currentLeft = bar.scrollLeft;
+                const targetLeft = currentLeft + (btnRect.left - barRect.left) - ((barRect.width - btnRect.width) / 2);
+
+                bar.scrollTo({
+                    left: Math.max(0, targetLeft),
+                    behavior: 'smooth'
+                });
+            }
+
+            currentActiveFanButton = category;
         }
 
         function handleFanScroll() {
             const content = document.getElementById('content-fan');
-            if (!content || content.classList.contains('hidden') || currentFanCategory !== 'All') return;
+            if (!content || content.classList.contains('hidden')) return;
             if (fanScrollTicking) return;
 
             fanScrollTicking = true;
             requestAnimationFrame(() => {
-                const filter = document.querySelector('.fan-sticky-filter');
+                updateFanStickyBar();
+                if (currentFanCategory !== 'All') {
+                    fanScrollTicking = false;
+                    return;
+                }
+                const filter = document.getElementById('fanStickyFilter');
                 const triggerY = (filter?.getBoundingClientRect().bottom || 0) + 24;
                 let activeCategory = 'All';
 
@@ -1046,7 +1202,9 @@ function getIdentity(name, stats) {
                     }
                 });
 
-                setFanActiveButton(activeCategory);
+                if (activeCategory !== currentActiveFanButton) {
+                    setFanActiveButton(activeCategory);
+                }
                 fanScrollTicking = false;
             });
         }
@@ -1091,6 +1249,7 @@ function getIdentity(name, stats) {
             }
 
             setFanActiveButton(category);
+            updateFanStickyBar();
             if (category !== 'All') window.scrollTo({ top: document.getElementById('content-fan').offsetTop, behavior: 'smooth' });
         }
 
@@ -1161,6 +1320,61 @@ function getIdentity(name, stats) {
                             }
                         }
                     }
+                }
+            });
+        }
+
+        function renderTypeCountChart(typeCount) {
+            const canvas = document.getElementById('typeCountChart');
+            const empty = document.getElementById('typeCountChartEmpty');
+            if (!canvas || !empty) return;
+
+            if (typeCountChart) {
+                typeCountChart.destroy();
+                typeCountChart = null;
+            }
+
+            const entries = Object.entries(typeCount);
+            if (!entries.length || typeof Chart === 'undefined') {
+                canvas.classList.add('hidden');
+                empty.classList.remove('hidden');
+                return;
+            }
+
+            canvas.classList.remove('hidden');
+            empty.classList.add('hidden');
+
+            typeCountChart = new Chart(canvas, {
+                type: 'doughnut',
+                data: {
+                    labels: entries.map(([type]) => type),
+                    datasets: [{
+                        data: entries.map(([, count]) => count),
+                        backgroundColor: ['#10b981', '#f59e0b', '#3b82f6', '#ef4444', '#8b5cf6', '#14b8a6'],
+                        borderWidth: 0,
+                        hoverOffset: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                boxWidth: 10,
+                                boxHeight: 10,
+                                color: '#374151',
+                                font: { weight: '700', size: 11 }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: context => `${context.label}：${context.parsed} 場`
+                            }
+                        }
+                    },
+                    cutout: '60%'
                 }
             });
         }
@@ -1239,9 +1453,10 @@ function getIdentity(name, stats) {
             const sorted = Object.entries(s)
                 .filter(([n]) => !friendSearch || n.toLowerCase().includes(friendSearch))
                 .sort((a,b) => b[1].c - a[1].c);
+            const usedIdentityTitles = new Set();
             
             document.getElementById('friendsGrid').innerHTML = sorted.map(([n, v]) => {
-                const iden = getIdentity(n, v);
+                const iden = getIdentity(n, v, usedIdentityTitles);
                 const safeName = escapeHTML(n);
                 const safeEmoji = escapeHTML(playerEmojis[n] || '👤');
                 const displayMax = v.max === -Infinity ? "--" : formatSigned(v.max);
@@ -1413,6 +1628,7 @@ function getIdentity(name, stats) {
     }, 100);
 
     renderMonthlyChart(monthStats, year);
+    renderTypeCountChart(typeCount);
 
     // 牌型分析
     document.getElementById('meTypeAnalysis').innerHTML = Object.entries(typeStats).map(([t, v]) => `
@@ -1516,7 +1732,12 @@ function getIdentity(name, stats) {
                 const btn = document.getElementById('btn-'+id);
                 if (btn) btn.className = id === t ? 'tab-btn tab-active' : 'tab-btn';
             });
-            if (t === 'fan') renderFanTable();
+            if (t === 'fan') {
+                renderFanTable();
+                requestAnimationFrame(updateFanStickyBar);
+            } else {
+                updateFanStickyBar();
+            }
         }
 
         function toggleInput() { 
@@ -1663,11 +1884,12 @@ function getIdentity(name, stats) {
             document.getElementById('filtPlayer').innerHTML = '<option value="">👤 選擇玩家</option>' + pArray.map(p => `<option value="${escapeHTML(p)}">${escapeHTML(p)}</option>`).join('');
             document.getElementById('locs').innerHTML = locArray.map(l => `<option value="${escapeHTML(l)}">`).join('');
             
-            renderRankTab(); renderFriends(); renderMeTab(); renderHistory(); renderFanTable();
+            renderRankTab(); renderFriends(); renderMeTab(); renderHistory(); renderFanTable(); updateFanStickyBar();
         }
 
         document.getElementById('emojiGrid').innerHTML = EMOJI_LIST.map(e => `<div onclick="selectEmoji('${e}')" class="p-3 text-center rounded-xl cursor-pointer text-3xl transition-transform hover:scale-110">${e}</div>`).join('');
         window.addEventListener('scroll', handleFanScroll, { passive: true });
+        window.addEventListener('resize', updateFanStickyBar);
         window.onload = () => { fetchGames(); };
     </script>
 </body>
