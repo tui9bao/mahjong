@@ -89,7 +89,7 @@
 
         /* 正數全區塊綠色 */
         .profit-card {
-            background: #d1fae5 !important;
+            background: #ecfdf5 !important;
             border-bottom: 6px solid var(--mj-green-dark) !important;
             color: #065f46 !important;
         }
@@ -146,6 +146,16 @@
             border-radius: 0 8px 8px 0;
         }
 
+        .top-rank-glow {
+            box-shadow:
+                0 0 0 2px rgba(251, 191, 36, 0.32),
+                0 0 18px rgba(251, 191, 36, 0.28),
+                0 0 32px rgba(250, 204, 21, 0.14),
+                0 6px 12px rgba(16, 185, 129, 0.12),
+                inset -1px -1px 2px rgba(0, 0, 0, 0.06),
+                inset 1px 1px 2px rgba(255, 255, 255, 0.95);
+        }
+
         /* 牌型標籤 */
         .type-tag {
             background: var(--mj-green);
@@ -157,6 +167,206 @@
             border: none;
             box-shadow: 0 2px 6px rgba(16, 185, 129, 0.2);
             display: inline-block;
+        }
+
+        .type-tag.gd {
+            background: linear-gradient(135deg, #10b981, #34d399);
+            box-shadow: 0 2px 6px rgba(16, 185, 129, 0.18);
+        }
+
+        .type-tag.rmz {
+            background: linear-gradient(135deg, #3b82f6, #60a5fa);
+            box-shadow: 0 2px 6px rgba(59, 130, 246, 0.18);
+        }
+
+        .type-tag.hktp {
+            background: linear-gradient(135deg, #8b5cf6, #a78bfa);
+            box-shadow: 0 2px 6px rgba(139, 92, 246, 0.18);
+        }
+
+        .me-type-card {
+            border-top: 4px solid #10b981;
+            background:
+                linear-gradient(180deg, rgba(16, 185, 129, 0.10), rgba(255, 255, 255, 0.96) 58%);
+        }
+
+        .me-type-card .type-name {
+            color: #047857;
+        }
+
+        .me-type-card.gd {
+            border-top-color: #10b981;
+            background:
+                linear-gradient(180deg, rgba(16, 185, 129, 0.12), rgba(255, 255, 255, 0.96) 58%);
+        }
+
+        .me-type-card.rmz {
+            border-top-color: #3b82f6;
+            background:
+                linear-gradient(180deg, rgba(59, 130, 246, 0.12), rgba(255, 255, 255, 0.96) 58%);
+        }
+
+        .me-type-card.rmz .type-name {
+            color: #2563eb;
+        }
+
+        .me-type-card.hktp {
+            border-top-color: #8b5cf6;
+            background:
+                linear-gradient(180deg, rgba(139, 92, 246, 0.12), rgba(255, 255, 255, 0.96) 58%);
+        }
+
+        .me-type-card.hktp .type-name {
+            color: #7c3aed;
+        }
+
+        .att-stamp {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 42px;
+            min-width: 84px;
+            padding: 6px 12px;
+            border-radius: 999px;
+            border: 2px solid currentColor;
+            font-size: 12px;
+            font-weight: 900;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            white-space: nowrap;
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            z-index: 2;
+            background:
+                radial-gradient(circle at 18% 28%, rgba(255,255,255,0.85) 0 10%, transparent 11%),
+                radial-gradient(circle at 72% 68%, rgba(255,255,255,0.55) 0 8%, transparent 9%),
+                linear-gradient(135deg, rgba(255,255,255,0.10), rgba(255,255,255,0.02)),
+                repeating-linear-gradient(135deg, rgba(255,255,255,0.02) 0 2px, rgba(0,0,0,0.02) 2px 4px);
+            box-shadow:
+                inset 0 0 0 1px rgba(255,255,255,0.22),
+                0 2px 4px rgba(15, 23, 42, 0.05);
+            transform: rotate(-9deg);
+            filter: saturate(0.92);
+            overflow: hidden;
+        }
+
+        .att-stamp::before {
+            content: '';
+            position: absolute;
+            inset: 4px;
+            border: 1px dashed currentColor;
+            border-radius: 999px;
+            opacity: 0.35;
+            pointer-events: none;
+        }
+
+        .att-stamp::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(circle at 22% 40%, rgba(255,255,255,0.34) 0 5%, transparent 6%),
+                radial-gradient(circle at 58% 20%, rgba(255,255,255,0.18) 0 4%, transparent 5%),
+                radial-gradient(circle at 76% 72%, rgba(255,255,255,0.28) 0 5%, transparent 6%);
+            mix-blend-mode: screen;
+            pointer-events: none;
+        }
+
+        .att-stamp.legend {
+            color: #7c3aed;
+            background-color: rgba(245, 243, 255, 0.92);
+        }
+
+        .att-stamp.legend.image-stamp {
+            min-width: 92px;
+            width: 92px;
+            min-height: 92px;
+            height: 92px;
+            padding: 0;
+            border: 0;
+            border-radius: 50%;
+            background: transparent url('lengend.png') center / contain no-repeat;
+            box-shadow: none;
+            transform: rotate(-7deg);
+            filter: none;
+            color: transparent;
+            text-indent: -9999px;
+            overflow: visible;
+        }
+
+        .att-stamp.iron.image-stamp {
+            min-width: 92px;
+            width: 92px;
+            min-height: 92px;
+            height: 92px;
+            padding: 0;
+            border: 0;
+            border-radius: 50%;
+            background: transparent url('iron.png') center / contain no-repeat;
+            box-shadow: none;
+            transform: rotate(-7deg);
+            filter: none;
+            color: transparent;
+            text-indent: -9999px;
+            overflow: visible;
+        }
+
+        .att-stamp.legend.image-stamp::before,
+        .att-stamp.legend.image-stamp::after,
+        .att-stamp.iron.image-stamp::before,
+        .att-stamp.iron.image-stamp::after {
+            display: none;
+        }
+
+        .att-stamp.iron {
+            color: #047857;
+            background-color: rgba(236, 253, 245, 0.92);
+        }
+
+        .att-stamp.active {
+            color: #2563eb;
+            background-color: rgba(239, 246, 255, 0.92);
+        }
+
+        .att-stamp.casual {
+            color: #b45309;
+            background-color: rgba(255, 251, 235, 0.92);
+        }
+
+        .att-stamp.rare {
+            color: #475569;
+            background-color: rgba(248, 250, 252, 0.94);
+        }
+
+        .att-stamp.passby {
+            color: #6b7280;
+            background-color: rgba(249, 250, 251, 0.95);
+        }
+
+        @media (max-width: 640px) {
+            .att-stamp {
+                min-height: 36px;
+                min-width: 72px;
+                font-size: 10px;
+                top: 14px;
+                right: 14px;
+                padding: 5px 10px;
+            }
+
+            .att-stamp.legend.image-stamp {
+                min-width: 76px;
+                width: 76px;
+                min-height: 76px;
+                height: 76px;
+            }
+
+            .att-stamp.iron.image-stamp {
+                min-width: 76px;
+                width: 76px;
+                min-height: 76px;
+                height: 76px;
+            }
         }
 
         select, input {
@@ -560,6 +770,83 @@
             position: relative;
         }
 
+        .me-summary-stack {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 12px;
+        }
+
+        .me-hero-card {
+            padding: 18px 18px 16px !important;
+            min-height: 124px;
+            align-items: center;
+            text-align: center;
+        }
+
+        .me-hero-card .label {
+            font-size: 12px;
+            letter-spacing: 0.08em;
+        }
+
+        .me-hero-card .value {
+            font-size: 3.15rem;
+            line-height: 1;
+        }
+
+        .me-mini-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .me-stat-card {
+            padding: 12px 10px !important;
+            min-height: 78px;
+        }
+
+        .me-stat-card .label {
+            font-size: 11px;
+            letter-spacing: 0.08em;
+            margin-bottom: 7px;
+        }
+
+        .me-stat-card .value {
+            font-size: 1.28rem;
+            line-height: 1.05;
+        }
+
+        .section-tight {
+            gap: 12px !important;
+        }
+
+        .rank-row {
+            padding: 14px 16px;
+        }
+
+        .rank-avatar {
+            width: 48px;
+            height: 60px;
+            font-size: 1.55rem;
+        }
+
+        .rank-badge {
+            width: 22px;
+            height: 22px;
+            font-size: 8px;
+        }
+
+        .rank-name {
+            font-size: 1rem;
+        }
+
+        .rank-meta {
+            font-size: 9px;
+        }
+
+        .rank-score {
+            font-size: 1.55rem;
+        }
+
         @media (max-width: 640px) {
             .input-form-grid {
                 grid-template-columns: 1fr;
@@ -572,6 +859,66 @@
 
             .mini-chart-box {
                 height: 210px;
+            }
+
+            .me-summary-stack {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .me-mini-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                gap: 8px;
+            }
+
+            .me-hero-card {
+                min-height: 108px;
+                padding: 15px 14px 14px !important;
+            }
+
+            .me-hero-card .label {
+                font-size: 11px;
+            }
+
+            .me-hero-card .value {
+                font-size: 2.55rem;
+            }
+
+            .me-stat-card {
+                padding: 12px 8px !important;
+                border-bottom-width: 5px !important;
+                min-height: 68px;
+            }
+
+            .me-stat-card .label {
+                font-size: 10px;
+                letter-spacing: 0.06em;
+            }
+
+            .me-stat-card .value {
+                font-size: 1.18rem;
+            }
+
+            .rank-row {
+                padding: 12px 12px;
+            }
+
+            .rank-avatar {
+                width: 40px;
+                height: 50px;
+                font-size: 1.2rem;
+            }
+
+            .rank-name {
+                font-size: 0.9rem;
+            }
+
+            .rank-meta {
+                font-size: 8px;
+            }
+
+            .rank-score {
+                font-size: 1.2rem;
             }
         }
 
@@ -608,8 +955,21 @@
             }
 
             body > .max-w-4xl {
-                padding-left: 14px;
-                padding-right: 14px;
+                padding-left: 18px;
+                padding-right: 18px;
+            }
+
+            .mj-card {
+                box-shadow: 0 3px 0 #e5e7eb, 0 8px 12px -8px rgba(0,0,0,0.16);
+            }
+
+            #content-rank,
+            #content-friends,
+            #content-me,
+            #content-history,
+            #content-fan {
+                padding-left: 2px;
+                padding-right: 2px;
             }
 
             nav {
@@ -780,9 +1140,9 @@
         </div>
 
         <!-- Tab Content: Me -->
-       <div id="content-me" class="hidden space-y-8 animate__animated animate__fadeIn">
+       <div id="content-me" class="hidden space-y-6 animate__animated animate__fadeIn">
     <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center px-1 gap-3">
-        <h2 class="font-black text-xl sm:text-2xl text-emerald-700 flex items-center gap-2 min-w-0">
+        <h2 class="font-black text-2xl sm:text-3xl text-emerald-700 flex items-center gap-2 min-w-0">
             <i class="fa-solid fa-fire-flame-curved flex-shrink-0"></i> 
             <span class="truncate min-w-0"><span id="myNameDisplay">Yanyi</span> 戰績</span>
         </h2>
@@ -799,9 +1159,9 @@
         </div>
     </div>
             
-            <div class="grid grid-cols-2 sm:grid-cols-3 gap-4" id="meSummary"></div>
+            <div id="meSummary"></div>
 
-            <div class="space-y-4">
+            <div class="space-y-3">
                 <h3 class="font-black text-lg text-emerald-700 px-1 flex items-center gap-2">
                     <i class="fa-solid fa-chart-column text-emerald-600"></i> 每月戰績
                 </h3>
@@ -813,43 +1173,48 @@
                 </div>
             </div>
             
-            <div class="space-y-4">
+            <div class="space-y-3">
                 <h3 class="font-black text-lg text-emerald-700 px-1 flex items-center gap-2">
                     <i class="fa-solid fa-chart-pie text-emerald-600"></i> 牌型分析
                 </h3>
-                <div class="space-y-4">
-                    <div>
-                        <p class="text-[11px] font-black text-emerald-600 uppercase tracking-widest px-1 mb-3">牌型盈虧</p>
-                        <div id="meTypeAnalysis" class="grid grid-cols-2 sm:grid-cols-3 gap-4"></div>
-                    </div>
-                    <div>
-                        <p class="text-[11px] font-black text-emerald-600 uppercase tracking-widest px-1 mb-3">牌型出場次數</p>
-                        <div class="mj-card p-5 gold-border">
-                            <div class="mini-chart-box">
-                                <canvas id="typeCountChart"></canvas>
-                            </div>
-                            <p id="typeCountChartEmpty" class="hidden text-center text-gray-400 text-xs font-bold py-8">暫無牌型統計</p>
-                        </div>
-                    </div>
+                <div>
+                    <p class="text-[11px] font-black text-emerald-600 uppercase tracking-widest px-1 mb-3">牌型盈虧</p>
+                    <div id="meTypeAnalysis" class="grid grid-cols-2 sm:grid-cols-3 gap-4"></div>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="mj-card p-6 border-l-8 border-l-emerald-500">
-                    <p class="text-[11px] font-black text-emerald-600 uppercase mb-4 flex items-center gap-2">
+            <div class="space-y-3">
+                <h3 class="font-black text-lg text-emerald-700 px-1 flex items-center gap-2">
+                    <i class="fa-solid fa-wand-sparkles text-emerald-600"></i> 玄學
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div class="mj-card p-5 border-l-8 border-l-emerald-500">
+                    <p class="text-[12px] font-black text-emerald-600 uppercase mb-3 flex items-center gap-2">
                         <i class="fa-solid fa-wand-sparkles"></i> 旺我 (貴人)
                     </p>
-                    <div id="luckBest" class="space-y-4"></div>
+                    <div id="luckBest" class="space-y-2"></div>
                 </div>
-                <div class="mj-card p-6 border-l-8 border-l-red-500">
-                    <p class="text-[11px] font-black text-red-600 uppercase mb-4 flex items-center gap-2">
+                <div class="mj-card p-5 border-l-8 border-l-red-500">
+                    <p class="text-[12px] font-black text-red-600 uppercase mb-3 flex items-center gap-2">
                         <i class="fa-solid fa-skull-crossbones"></i> 剋我 (天敵)
                     </p>
-                    <div id="luckWorst" class="space-y-4"></div>
+                    <div id="luckWorst" class="space-y-2"></div>
                 </div>
             </div>
+            </div>
 
-            <div id="meLocs" class="space-y-3"></div>
+            <div class="space-y-3">
+                <h3 class="font-black text-lg text-emerald-700 px-1 flex items-center gap-2">
+                    <i class="fa-solid fa-map-location-dot text-emerald-600"></i> 地點表現
+                </h3>
+                <div class="mj-card overflow-hidden">
+                    <div class="grid grid-cols-[1fr_auto] gap-3 px-4 py-3 text-[11px] font-black uppercase tracking-widest text-gray-400 border-b border-emerald-100 bg-emerald-50/60">
+                        <span>地點</span>
+                        <span>盈虧</span>
+                    </div>
+                    <div id="meLocs" class="divide-y divide-emerald-50"></div>
+                </div>
+            </div>
         </div>
 
         <!-- Tab Content: History -->
@@ -900,9 +1265,9 @@
                     <div>
                         <label class="text-[10px] font-black text-gray-400 uppercase ml-2">牌型</label>
                         <select id="gType" class="outline-none">
-                            <option value="廣東牌">廣東牌</option>
-                            <option value="跑馬仔">跑馬仔</option>
-                            <option value="港式台牌">港式台牌</option>
+                            <option value="廣東牌">🇭🇰 廣東牌</option>
+                            <option value="跑馬仔">🐎 跑馬仔</option>
+                            <option value="港式台牌">🇹🇼 港式台牌</option>
                         </select>
                     </div>
                 </div>
@@ -962,7 +1327,6 @@
         let currentTargetInputIdx = null;
         let currentEditingPlayer = null;
         let monthlyChart = null;
-        let typeCountChart = null;
 
         function stableHash(input) {
             return String(input).split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
@@ -1039,12 +1403,75 @@
             usedTitles.add(chosen.t);
             return { ...chosen, band, trait };
         }
-        async function fetchGames() {
+        function normalizeGameForCache(game) {
+            return {
+                ...game,
+                date: game.date ? String(game.date).split('T')[0] : game.date,
+                location: game.location || '',
+                type: game.type || '廣東牌',
+                players: game.players || {}
+            };
+        }
+
+        function gameSignature(game) {
+            const normalized = normalizeGameForCache(game);
+            const playerPart = Object.entries(normalized.players)
+                .sort(([a], [b]) => a.localeCompare(b))
+                .map(([name, score]) => `${name}:${Number(score)}`)
+                .join('|');
+            return [normalized.date, normalized.location, normalized.type, playerPart].join('::');
+        }
+
+        function mergeUniqueGames(primaryGames, fallbackGames = []) {
+            const seen = new Set();
+            return [...primaryGames, ...fallbackGames].filter(game => {
+                const sig = gameSignature(game);
+                if (seen.has(sig)) return false;
+                seen.add(sig);
+                return true;
+            });
+        }
+
+        function getPendingGames() {
+            try {
+                return JSON.parse(localStorage.getItem('mj_pending_games') || '[]');
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function setPendingGames(pendingGames) {
+            localStorage.setItem('mj_pending_games', JSON.stringify(pendingGames));
+        }
+
+        function addGameLocally(game) {
+            const normalizedGame = normalizeGameForCache(game);
+            const pendingGames = mergeUniqueGames([normalizedGame], getPendingGames()).slice(0, 12);
+            setPendingGames(pendingGames);
+            games = mergeUniqueGames([normalizedGame], games);
+            localStorage.setItem('mj_games_cache', JSON.stringify(games));
+            renderAll();
+        }
+
+        function getKnownPlayerMap() {
+            const knownPlayers = new Map();
+            games.forEach(game => {
+                if (!game.players) return;
+                Object.keys(game.players).forEach(name => {
+                    const key = name.trim().toLowerCase();
+                    if (key && !knownPlayers.has(key)) knownPlayers.set(key, name.trim());
+                });
+            });
+            return knownPlayers;
+        }
+
+        async function fetchGames(options = {}) {
+    const skipCache = options.skipCache || false;
     // 1. 先從瀏覽器「小冰箱」(localStorage) 檢查有沒有舊資料
     const cachedData = localStorage.getItem('mj_games_cache');
     const cachedEmojis = localStorage.getItem('mj_emojis_cache');
 
-    if (cachedData) {
+    if (cachedData && !skipCache) {
         try {
             // 如果冰箱有資料，先拿出來顯示，讓畫面秒開
             games = JSON.parse(cachedData);
@@ -1061,11 +1488,17 @@
 
     // 2. 同時去 Google Sheet 拿最新資料
     try {
-        const response = await fetch(API_URL);
+        const freshUrl = `${API_URL}${API_URL.includes('?') ? '&' : '?'}_=${Date.now()}`;
+        const response = await fetch(freshUrl, { cache: 'no-store' });
         const data = await response.json();
         
         // 拿到了新資料，存進「小冰箱」留給下次用
-        games = data.games ? data.games.reverse() : [];
+        const serverGames = data.games ? data.games.reverse().map(normalizeGameForCache) : [];
+        const pendingGames = getPendingGames();
+        const serverSignatures = new Set(serverGames.map(gameSignature));
+        const unresolvedPendingGames = pendingGames.filter(game => !serverSignatures.has(gameSignature(game)));
+        games = mergeUniqueGames(unresolvedPendingGames, serverGames);
+        setPendingGames(unresolvedPendingGames);
         if (data.emojis) playerEmojis = { ...playerEmojis, ...data.emojis };
         
         localStorage.setItem('mj_games_cache', JSON.stringify(games));
@@ -1094,6 +1527,23 @@
 
         function formatSigned(value) {
             return `${value > 0 ? '+' : ''}${value}`;
+        }
+
+        function getTypeTagClass(type) {
+            if (type === '跑馬仔') return 'rmz';
+            if (type === '港式台牌') return 'hktp';
+            return 'gd';
+        }
+
+        function getTypeDisplay(type) {
+            if (type === '港式台牌') return '🇹🇼 港式台牌';
+            if (type === '跑馬仔') return '🐎 跑馬仔';
+            return '🇭🇰 廣東牌';
+        }
+
+        function isCumulativeGameForPlayer(game, selectedPlayerLower, score) {
+            return (selectedPlayerLower === DEFAULT_ME_NAME && game.date === '2024-04-27' && game.location === 'yanyi home') ||
+                (selectedPlayerLower === DEFAULT_ME_NAME && score === 1440);
         }
 
         let currentFanCategory = 'All';
@@ -1324,61 +1774,6 @@
             });
         }
 
-        function renderTypeCountChart(typeCount) {
-            const canvas = document.getElementById('typeCountChart');
-            const empty = document.getElementById('typeCountChartEmpty');
-            if (!canvas || !empty) return;
-
-            if (typeCountChart) {
-                typeCountChart.destroy();
-                typeCountChart = null;
-            }
-
-            const entries = Object.entries(typeCount);
-            if (!entries.length || typeof Chart === 'undefined') {
-                canvas.classList.add('hidden');
-                empty.classList.remove('hidden');
-                return;
-            }
-
-            canvas.classList.remove('hidden');
-            empty.classList.add('hidden');
-
-            typeCountChart = new Chart(canvas, {
-                type: 'doughnut',
-                data: {
-                    labels: entries.map(([type]) => type),
-                    datasets: [{
-                        data: entries.map(([, count]) => count),
-                        backgroundColor: ['#10b981', '#f59e0b', '#3b82f6', '#ef4444', '#8b5cf6', '#14b8a6'],
-                        borderWidth: 0,
-                        hoverOffset: 6
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                boxWidth: 10,
-                                boxHeight: 10,
-                                color: '#374151',
-                                font: { weight: '700', size: 11 }
-                            }
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: context => `${context.label}：${context.parsed} 場`
-                            }
-                        }
-                    },
-                    cutout: '60%'
-                }
-            });
-        }
-
         function updateStatus(text, dotClass) {
             document.getElementById('statusText').innerText = text;
             document.getElementById('statusDot').className = `w-2.5 h-2.5 rounded-full ${dotClass}`;
@@ -1408,24 +1803,24 @@
                 const safeEmoji = escapeHTML(playerEmojis[n] || '👤');
                 
                 return `
-                <div class="flex justify-between items-center p-6 hover:bg-emerald-50 transition-colors relative">
-                    <div class="flex items-center gap-5">
+                <div class="rank-row flex justify-between items-center hover:bg-emerald-50 transition-colors relative">
+                    <div class="flex items-center gap-4 min-w-0">
                         <div class="relative">
-                            <div class="avatar-frame ${idx < 3 ? 'ring-4 ring-amber-400 crown-anim' : ''}">
+                            <div class="avatar-frame rank-avatar ${idx < 3 ? 'top-rank-glow crown-anim' : ''}">
                                 ${safeEmoji}
                             </div>
-                            <div class="absolute -top-2 -left-2 bg-emerald-800 text-white text-[9px] font-black w-6 h-6 rounded-full flex items-center justify-center shadow-md border-2 border-white">
+                            <div class="rank-badge absolute -top-2 -left-2 bg-emerald-800 text-white font-black rounded-full flex items-center justify-center shadow-md border-2 border-white">
                                 ${rank}
                             </div>
                         </div>
                         
-                        <div class="flex flex-col">
-                            <span class="font-black text-emerald-800 text-lg">${safeName}</span>
-                            <span class="text-[10px] text-gray-500 font-black tracking-widest uppercase">${v.c} 場 • 勝率 ${((v.w/v.c)*100).toFixed(0)}%</span>
+                        <div class="flex flex-col min-w-0">
+                            <span class="rank-name font-black text-emerald-800 truncate">${safeName}</span>
+                            <span class="rank-meta text-gray-500 font-black tracking-widest uppercase">${v.c} 場 • 勝率 ${((v.w/v.c)*100).toFixed(0)}%</span>
                         </div>
                     </div>
                     
-                    <span class="font-black font-mono text-2xl ${v.t>=0?'profit':'loss'}">
+                    <span class="rank-score font-black font-mono ${v.t>=0?'profit':'loss'} flex-shrink-0 pl-3">
                         ${formatSigned(v.t)}
                     </span>
                 </div>`;
@@ -1460,28 +1855,34 @@
                 const safeName = escapeHTML(n);
                 const safeEmoji = escapeHTML(playerEmojis[n] || '👤');
                 const displayMax = v.max === -Infinity ? "--" : formatSigned(v.max);
+                const latestGame = games.find(g => g.players && Object.keys(g.players).some(p => p.toLowerCase() === n.toLowerCase()));
+                const latestKey = latestGame ? Object.keys(latestGame.players).find(p => p.toLowerCase() === n.toLowerCase()) : null;
+                const latestScore = latestKey ? latestGame.players[latestKey] : null;
+                const latestMeta = latestGame && latestScore !== null
+                    ? `<span class="font-mono ${latestScore >= 0 ? 'text-emerald-600' : 'text-red-600'}">${formatSigned(latestScore)}</span> <span class="text-gray-300">·</span> ${escapeHTML(latestGame.date?.split('T')[0] || '')}`
+                    : '';
                 
                 // 2. 出席率分類邏輯 (依照你的要求)
                 let attLabel = "";
                 let attClass = "";
                 if (v.c >= 50) {
                     attLabel = "傳說";
-                    attClass = "bg-purple-600 text-white";
+                    attClass = "att-stamp legend";
                 } else if (v.c >= 20) {
                     attLabel = "鐵腳";
-                    attClass = "bg-emerald-600 text-white";
+                    attClass = "att-stamp iron";
                 } else if (v.c >= 10) {
                     attLabel = "活躍";
-                    attClass = "bg-blue-500 text-white";
+                    attClass = "att-stamp active";
                 } else if (v.c >= 7) {
                     attLabel = "偶爾";
-                    attClass = "bg-amber-500 text-white";
+                    attClass = "att-stamp casual";
                 } else if (v.c >= 2) {
                     attLabel = "稀客";
-                    attClass = "bg-slate-400 text-white";
+                    attClass = "att-stamp rare";
                 } else {
                     attLabel = "路過";
-                    attClass = "bg-gray-200 text-gray-500 border border-gray-300";
+                    attClass = "att-stamp passby";
                 }
 
                 const sortedLuck = Object.entries(v.luckMap).sort((a, b) => b[1] - a[1]);
@@ -1489,19 +1890,20 @@
                 const worst = sortedLuck.length > 0 && sortedLuck[sortedLuck.length - 1][1] < 0 ? sortedLuck[sortedLuck.length - 1] : null;
 
                 return `
-                <div class="mj-card p-6 flex flex-col justify-between hover:scale-[1.02] transition-transform gold-border">
+                <div class="mj-card p-6 pt-8 flex flex-col justify-between hover:scale-[1.02] transition-transform gold-border relative overflow-hidden">
                     <div>
+                        <span class="${attClass}">${attLabel}</span>
                         <div class="flex items-center gap-5 mb-6">
                             <div data-player="${safeName}" onclick="openEmojiPickerForPlayer(this.dataset.player)" class="avatar-frame cursor-pointer hover:rotate-6 transition-transform relative">
                                 ${safeEmoji}
                             </div>
                             <div class="flex-grow min-w-0">
-                                <div class="flex flex-wrap items-center gap-1.5 mb-1">
+                                <div class="flex flex-wrap items-center gap-1.5 mb-1 pr-24 sm:pr-28">
                                     <h3 class="text-xl font-black text-emerald-800">${safeName}</h3>
-                                    <span class="px-2 py-0.5 rounded text-[8px] font-black uppercase whitespace-nowrap ${attClass}">${attLabel}</span>
                                     <span class="px-2 py-0.5 rounded text-[8px] font-black uppercase whitespace-nowrap border border-gray-200 text-gray-500">${iden.t}</span>
                                 </div>
                                 <div class="text-[9px] text-gray-400 font-bold uppercase tracking-widest">累計場數: ${v.c} 場</div>
+                                ${latestMeta ? `<div class="text-[9px] text-gray-400 font-black uppercase tracking-widest mt-1">最近一局 ${latestMeta}</div>` : ''}
                             </div>
                         </div>
 
@@ -1562,7 +1964,7 @@
         locStats[g.location] = (locStats[g.location] || 0) + score;
 
         // 判斷是否為彙總數據
-        const isCumulative = (selectedPlayerLower === DEFAULT_ME_NAME && g.date === '2024-04-27' && g.location === 'yanyi home') || (selectedPlayerLower === DEFAULT_ME_NAME && score === 1440);
+        const isCumulative = isCumulativeGameForPlayer(g, selectedPlayerLower, score);
 
         if (!isCumulative) {
             validScores.push(score);
@@ -1594,32 +1996,45 @@
     const avgScore = validScores.length > 0 ? (validTotal / validScores.length).toFixed(1) : 0;
     const winRate = validScores.length > 0 ? ((wins / validScores.length) * 100).toFixed(0) : 0;
     const highest = validScores.length > 0 ? Math.max(...validScores) : 0;
+    const lowest = validScores.length > 0 ? Math.min(...validScores) : 0;
 
-    // 更新頂部卡片 (移除最常玩，獨立拆分勝率與最高連勝)
+    const locEntries = Object.entries(locStats).sort((a, b) => b[1] - a[1]);
+    const bestLoc = locEntries.find(([, score]) => score > 0) || null;
+    const worstLoc = [...locEntries].reverse().find(([, score]) => score < 0) || null;
+
+    // 更新頂部卡片
     document.getElementById('meSummary').innerHTML = `
-        <div class="mj-card p-6 text-center border-none shadow-emerald-100 shadow-xl ${total>=0?'profit-card':'loss-card'} card-slide">
-            <div class="text-[10px] opacity-80 font-black uppercase tracking-widest">累積盈虧</div>
-            <div class="text-3xl font-black font-mono profit-value">${formatSigned(total)}</div>
-        </div>
-        <div class="mj-card p-6 text-center border-none shadow-xl card-slide" style="animation-delay: 0.1s">
-            <div class="text-[10px] text-gray-400 font-black uppercase tracking-widest">單場最高</div>
-            <div class="text-3xl font-black text-emerald-600 font-mono">${formatSigned(highest)}</div>
-        </div>
-        <div class="mj-card p-6 text-center border-none shadow-xl card-slide" style="animation-delay: 0.2s">
-            <div class="text-[10px] text-gray-400 font-black uppercase tracking-widest">勝率</div>
-            <div class="text-3xl font-black text-emerald-800 font-mono">${winRate}%</div>
-        </div>
-        <div class="mj-card p-6 text-center border-none shadow-xl card-slide" style="animation-delay: 0.3s">
-            <div class="text-[10px] text-gray-400 font-black uppercase tracking-widest">最高連勝</div>
-            <div class="text-3xl font-black text-emerald-800 font-mono">${maxStreak}</div>
-        </div>
-        <div class="mj-card p-6 text-center border-none shadow-xl card-slide" style="animation-delay: 0.4s">
-            <div class="text-[10px] text-gray-400 font-black uppercase tracking-widest">平均得分</div>
-            <div class="text-3xl font-black text-emerald-800 font-mono">${avgScore}</div>
-        </div>
-        <div class="mj-card p-6 text-center border-none shadow-xl card-slide" style="animation-delay: 0.5s">
-            <div class="text-[10px] text-gray-400 font-black uppercase tracking-widest">實戰局數</div>
-            <div class="text-3xl font-black text-emerald-800 font-mono">${validScores.length}</div>
+        <div class="me-summary-stack">
+            <div class="me-hero-card mj-card border-none shadow-emerald-100 shadow-xl ${total>=0?'profit-card':'loss-card'} card-slide flex flex-col justify-center gap-3">
+                <div class="label opacity-80 font-black uppercase tracking-widest">累積盈虧</div>
+                <div class="value font-black font-mono profit-value">${formatSigned(total)}</div>
+            </div>
+            <div class="me-mini-grid">
+                <div class="me-stat-card mj-card text-center border-none shadow-xl card-slide" style="animation-delay: 0.1s">
+                    <div class="label text-gray-400 font-black uppercase tracking-widest">勝率</div>
+                    <div class="value font-black text-emerald-800 font-mono">${winRate}%</div>
+                </div>
+                <div class="me-stat-card mj-card text-center border-none shadow-xl card-slide" style="animation-delay: 0.2s">
+                    <div class="label text-gray-400 font-black uppercase tracking-widest">平均得分</div>
+                    <div class="value font-black text-emerald-800 font-mono">${avgScore}</div>
+                </div>
+                <div class="me-stat-card mj-card text-center border-none shadow-xl card-slide" style="animation-delay: 0.3s">
+                    <div class="label text-gray-400 font-black uppercase tracking-widest">單場最高</div>
+                    <div class="value font-black text-emerald-600 font-mono">${formatSigned(highest)}</div>
+                </div>
+                <div class="me-stat-card mj-card text-center border-none shadow-xl card-slide" style="animation-delay: 0.4s">
+                    <div class="label text-gray-400 font-black uppercase tracking-widest">單場最大失分</div>
+                    <div class="value font-black text-red-600 font-mono">${formatSigned(lowest)}</div>
+                </div>
+                <div class="me-stat-card mj-card text-center border-none shadow-xl card-slide" style="animation-delay: 0.5s">
+                    <div class="label text-gray-400 font-black uppercase tracking-widest">最高連勝</div>
+                    <div class="value font-black text-emerald-800 font-mono">${maxStreak}</div>
+                </div>
+                <div class="me-stat-card mj-card text-center border-none shadow-xl card-slide" style="animation-delay: 0.6s">
+                    <div class="label text-gray-400 font-black uppercase tracking-widest">實戰局數</div>
+                    <div class="value font-black text-emerald-800 font-mono">${validScores.length}</div>
+                </div>
+            </div>
         </div>`;
 
     setTimeout(() => {
@@ -1628,28 +2043,32 @@
     }, 100);
 
     renderMonthlyChart(monthStats, year);
-    renderTypeCountChart(typeCount);
 
     // 牌型分析
     document.getElementById('meTypeAnalysis').innerHTML = Object.entries(typeStats).map(([t, v]) => `
-        <div class="mj-card p-4 text-center border-t-4 ${v>=0?'border-t-emerald-500':'border-t-red-500'}">
-            <div class="text-[9px] text-gray-400 font-black uppercase mb-1">${t}</div>
-            <div class="text-lg font-black font-mono ${v>=0?'profit':'loss'}">${formatSigned(v)}</div>
-            <div class="text-[8px] text-gray-400 mt-1">${typeCount[t]} 場</div>
+        <div class="mj-card me-type-card ${getTypeTagClass(t)} p-4 text-center">
+            <div class="type-name text-[10px] font-black uppercase mb-1">${escapeHTML(getTypeDisplay(t))}</div>
+            <div class="text-xl font-black font-mono ${v>=0?'profit':'loss'}">${formatSigned(v)}</div>
+            <div class="text-[9px] text-gray-400 mt-1">${typeCount[t]} 場</div>
         </div>`).join('') || '<p class="col-span-full text-center text-gray-400 text-xs">暫無數據</p>';
 
     // 更新玄學分析 (旺我剋我)
     const sortedLuck = Object.entries(luckMap).sort((a,b) => b[1] - a[1]);
     const luckHTML = (list) => list.map(([n, v]) => {
-        const count = myData.filter(g => g.players && g.players[n] !== undefined && !(selectedPlayerLower === DEFAULT_ME_NAME && g.date === '2024-04-27' && g.location === 'yanyi home')).length;
+        const count = myData.filter(g => {
+            if (!g.players || g.players[n] === undefined) return false;
+            const myKey = Object.keys(g.players).find(p => p.toLowerCase() === selectedPlayerLower);
+            return myKey && !isCumulativeGameForPlayer(g, selectedPlayerLower, g.players[myKey]);
+        }).length;
         return `
-        <div class="flex justify-between items-center bg-emerald-50 p-3 rounded-xl border border-emerald-100 mb-2">
-            <span class="text-xs font-black text-emerald-700 flex items-center gap-3">
-                <span class="avatar-frame !w-8 !h-10 !text-sm">${escapeHTML(playerEmojis[n]||'👤')}</span> ${escapeHTML(n)}
+        <div class="flex justify-between items-center px-1 py-1 mb-1 gap-3">
+            <span class="text-[12px] font-black text-emerald-700 flex items-center gap-2 min-w-0">
+                <span class="text-xl leading-none flex-shrink-0">${escapeHTML(playerEmojis[n]||'👤')}</span>
+                <span class="truncate">${escapeHTML(n)}</span>
             </span>
-            <div class="text-right">
+            <div class="text-right flex-shrink-0">
                 <div class="text-sm font-black font-mono ${v>=0?'text-emerald-600':'text-red-600'}">${formatSigned(v)}</div>
-                <div class="text-[8px] text-gray-400">${count} 場</div>
+                <div class="text-[9px] text-gray-400">${count} 場</div>
             </div>
         </div>`;
     }).join('');
@@ -1658,10 +2077,13 @@
     document.getElementById('luckWorst').innerHTML = luckHTML([...sortedLuck].reverse().slice(0, 3).filter(x => x[1] < 0)) || '<p class="text-xs text-gray-400">尚未解鎖...</p>';
     
     // 地點表現
-    document.getElementById('meLocs').innerHTML = Object.entries(locStats).map(([l, v]) => `
-        <div class="mj-card p-5 flex justify-between items-center hover:bg-emerald-50/50 transition-colors">
-            <span class="font-black text-emerald-800 flex items-center gap-3"><i class="fa-solid fa-map-location-dot text-emerald-600"></i> ${escapeHTML(l)}</span>
-            <span class="font-black font-mono text-xl ${v>=0?'profit':'loss'}">${formatSigned(v)}</span>
+    const meLocHighlights = document.getElementById('meLocHighlights');
+    if (meLocHighlights) meLocHighlights.remove();
+
+    document.getElementById('meLocs').innerHTML = locEntries.map(([l, v]) => `
+        <div class="grid grid-cols-[1fr_auto] gap-3 px-4 py-3 items-center hover:bg-emerald-50/40 transition-colors">
+            <span class="font-black text-[14px] text-emerald-800 flex items-center gap-2 min-w-0"><i class="fa-solid fa-map-location-dot text-emerald-600 flex-shrink-0"></i> <span class="truncate">${escapeHTML(l)}</span></span>
+            <span class="font-black font-mono text-base ${v>=0?'profit':'loss'} flex-shrink-0">${formatSigned(v)}</span>
         </div>`).join('');
 }
 
@@ -1680,20 +2102,18 @@
             
             document.getElementById('historyList').innerHTML = filtered.map(g => `
                 <div class="mj-card p-6 relative">
-                    <div class="flex justify-between text-[10px] text-gray-400 mb-5 font-black uppercase tracking-widest">
-                        <span>📅 ${escapeHTML(g.date?.split('T')[0])}</span>
-                        <span>📍 ${escapeHTML(g.location)}</span>
-                    </div>
-                    <div class="mb-4">
-                        <span class="type-tag">${escapeHTML(g.type || '廣東牌')}</span>
+                    <div class="flex flex-wrap items-center justify-between gap-2 text-[10px] text-gray-400 mb-5 font-black uppercase tracking-widest">
+                        <span class="whitespace-nowrap">📅 ${escapeHTML(g.date?.split('T')[0])}</span>
+                        <span class="whitespace-nowrap">📍 ${escapeHTML(g.location)}</span>
+                        <span class="type-tag ${getTypeTagClass(g.type || '廣東牌')}">${escapeHTML(getTypeDisplay(g.type || '廣東牌'))}</span>
                     </div>
                     <div class="grid grid-cols-2 gap-3">
                         ${g.players ? Object.entries(g.players).map(([n, v]) => `
-                            <div class="p-3 rounded-xl ${n===pFilt ? 'bg-emerald-600 text-white ring-4 ring-emerald-100' : 'bg-emerald-50 border border-emerald-100'} flex justify-between items-center">
+                            <div class="p-3 rounded-xl ${n===pFilt ? 'bg-gray-50 border border-emerald-200 ring-2 ring-emerald-100' : 'bg-gray-50'} flex justify-between items-center">
                                 <span class="text-xs font-black flex items-center gap-2">
                                     <span class="avatar-frame !w-6 !h-8 !text-sm">${escapeHTML(playerEmojis[n]||'👤')}</span> ${escapeHTML(n)}
                                 </span>
-                                <span class="font-black font-mono ${n===pFilt ? 'text-white' : (v>=0?'profit':'loss')}">${formatSigned(v)}</span>
+                                <span class="font-black font-mono ${v>=0?'profit':'loss'}">${formatSigned(v)}</span>
                             </div>`).join('') : ''}
                     </div>
                 </div>`).join('') || '<div class="p-10 text-center text-gray-400 font-bold">查無對局紀錄</div>';
@@ -1703,13 +2123,18 @@
             const date = document.getElementById('gDate').value, loc = document.getElementById('gLoc').value.trim(), type = document.getElementById('gType').value;
             const pNames = document.querySelectorAll('.pn'), pScores = document.querySelectorAll('.ps');
             let players = {};
+            const knownPlayerMap = getKnownPlayerMap();
+            const seenPlayerKeys = new Set();
             let duplicateName = false;
             let invalidScore = false;
             pNames.forEach((n, i) => {
-                const name = n.value.trim();
-                if (!name) return;
+                const rawName = n.value.trim();
+                if (!rawName) return;
+                const playerKey = rawName.toLowerCase();
+                const name = knownPlayerMap.get(playerKey) || rawName;
                 const score = parseFloat(pScores[i].value);
-                if (players[name] !== undefined) duplicateName = true;
+                if (seenPlayerKeys.has(playerKey)) duplicateName = true;
+                seenPlayerKeys.add(playerKey);
                 if (Number.isNaN(score)) invalidScore = true;
                 players[name] = score;
             });
@@ -1720,8 +2145,10 @@
             if(Math.abs(totalScore) > 0.001) return alert("四位玩家分數加起來應該等於 0");
             const btn = document.getElementById('saveBtn'); btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 儲存中...';
             try {
-                await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "addGame", date, location: loc, type, players }) });
-                alert("🀄️ 紀錄已入冊，祝您下局大贏！"); toggleInput(); fetchGames();
+                const newGame = { date, location: loc, type, players };
+                await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "addGame", ...newGame }) });
+                addGameLocally(newGame);
+                alert("🀄️ 紀錄已入冊，祝您下局大贏！"); toggleInput(); fetchGames({ skipCache: true });
             } catch (e) { alert("儲存失敗"); } finally { btn.disabled = false; btn.innerText = "確認儲存"; }
         }
 
@@ -1872,16 +2299,24 @@
             const pArray = Array.from(players).sort();
             const currentMeYear = document.getElementById('meYearSel').value || 'All';
             const currentMePlayer = document.getElementById('mePlayerSel').value || '';
+            const currentRankYear = document.getElementById('rankYearSel').value || 'All';
+            const currentRankLoc = document.getElementById('rankLocSel').value || 'All';
+            const currentHistoryPlayer = document.getElementById('filtPlayer').value || '';
+            const currentHistoryLoc = document.getElementById('filtLoc').value || '';
             const defaultPlayer = pArray.find(p => p.toLowerCase() === DEFAULT_ME_NAME) || pArray[0] || DEFAULT_ME_NAME;
             
             document.getElementById('rankYearSel').innerHTML = '<option value="All">所有年份</option>' + yearArray.map(y => `<option value="${y}">${y} 年</option>`).join('');
+            document.getElementById('rankYearSel').value = currentRankYear === 'All' || yearArray.includes(currentRankYear) ? currentRankYear : 'All';
             document.getElementById('mePlayerSel').innerHTML = pArray.map(p => `<option value="${escapeHTML(p)}">${escapeHTML(p)}</option>`).join('');
             document.getElementById('mePlayerSel').value = pArray.includes(currentMePlayer) ? currentMePlayer : defaultPlayer;
             document.getElementById('meYearSel').innerHTML = '<option value="All">所有年份</option>' + yearArray.map(y => `<option value="${y}">${y} 年</option>`).join('');
             document.getElementById('meYearSel').value = yearArray.includes(currentMeYear) ? currentMeYear : 'All';
             document.getElementById('rankLocSel').innerHTML = '<option value="All">所有地點</option>' + locArray.map(l => `<option value="${escapeHTML(l)}">${escapeHTML(l)}</option>`).join('');
+            document.getElementById('rankLocSel').value = currentRankLoc === 'All' || locArray.includes(currentRankLoc) ? currentRankLoc : 'All';
             document.getElementById('filtLoc').innerHTML = '<option value="">📍 選擇地點</option>' + locArray.map(l => `<option value="${escapeHTML(l)}">${escapeHTML(l)}</option>`).join('');
+            document.getElementById('filtLoc').value = currentHistoryLoc && locArray.includes(currentHistoryLoc) ? currentHistoryLoc : '';
             document.getElementById('filtPlayer').innerHTML = '<option value="">👤 選擇玩家</option>' + pArray.map(p => `<option value="${escapeHTML(p)}">${escapeHTML(p)}</option>`).join('');
+            document.getElementById('filtPlayer').value = currentHistoryPlayer && pArray.includes(currentHistoryPlayer) ? currentHistoryPlayer : '';
             document.getElementById('locs').innerHTML = locArray.map(l => `<option value="${escapeHTML(l)}">`).join('');
             
             renderRankTab(); renderFriends(); renderMeTab(); renderHistory(); renderFanTable(); updateFanStickyBar();
