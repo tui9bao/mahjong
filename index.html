@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&family=Noto+Serif+TC:wght@500;700;900&display=swap');
         
         :root {
             --mj-green: #10b981;
@@ -38,22 +38,17 @@
         }
         
         body::before {
-            content: '發 發 發 發 發 發 發 發 發 發 發 發 發 發 發 發 發 發 發 發 發 發 發 發 發 發 發 發 發 發 發 發 發 發 發 發 發 發 發 發 發 發 發 發 發 發 發 發 發 發 發 發 發 發 發 發 發 發 發 發';
+            content: "";
             position: fixed;
-            top: -20px;
-            left: -20px;
-            right: -20px;
-            bottom: -20px;
-            font-size: 140px;
-            opacity: 0.03;
+            inset: 0;
             pointer-events: none;
             z-index: -1;
-            line-height: 1.3;
-            word-wrap: break-word;
-            white-space: normal;
-            overflow: hidden;
-            color: var(--mj-green);
-            font-weight: 900;
+            background:
+                radial-gradient(ellipse 420px 220px at 12% 8%, rgba(16, 185, 129, 0.055), transparent 62%),
+                radial-gradient(ellipse 520px 260px at 88% 20%, rgba(180, 83, 9, 0.045), transparent 62%),
+                radial-gradient(ellipse 460px 250px at 28% 72%, rgba(16, 185, 129, 0.045), transparent 62%),
+                radial-gradient(ellipse 360px 180px at 78% 86%, rgba(180, 83, 9, 0.035), transparent 62%);
+            opacity: 0.9;
         }
 
         .safe-top { padding-top: env(safe-area-inset-top); }
@@ -548,16 +543,17 @@
         }
 
         .fan-filter-btn {
-            padding: 10px 16px;
+            padding: 9px 14px;
             border-radius: 999px;
-            border: 2px solid #d1fae5;
-            background: white;
+            border: 1px solid rgba(16, 185, 129, 0.22);
+            background: linear-gradient(180deg, rgba(255,255,255,0.94), rgba(236,253,245,0.84));
             color: #047857;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 900;
             white-space: nowrap;
             flex-shrink: 0;
             transition: all 0.2s ease;
+            box-shadow: 0 2px 0 rgba(6, 95, 70, 0.06);
         }
 
         .fan-filter-btn.active,
@@ -573,9 +569,11 @@
             background: rgba(255, 255, 255, 0.96);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
-            padding: 14px 0 12px;
-            border-bottom: 1px solid #d1fae5;
+            padding: 10px 10px 9px;
+            border: 1px solid rgba(16, 185, 129, 0.18);
+            border-radius: 24px;
             box-shadow: 0 8px 18px rgba(16, 185, 129, 0.08);
+            overflow: hidden;
         }
 
         .fan-sticky-placeholder {
@@ -600,15 +598,18 @@
         }
 
         .fan-category-section {
-            scroll-margin-top: 92px;
+            scroll-margin-top: 108px;
+            padding-top: 6px;
+            overflow: visible;
         }
 
         .fan-category-heading {
-            background: linear-gradient(135deg, #047857, #10b981);
-            color: white;
-            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(236,253,245,0.96), rgba(255,255,255,0.98));
+            color: #047857;
+            border: 1px solid rgba(16, 185, 129, 0.18);
+            border-radius: 999px;
             padding: 9px 14px;
-            box-shadow: 0 6px 0 #065f46, 0 10px 18px rgba(16, 185, 129, 0.16);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.09);
         }
 
         .search-box {
@@ -706,6 +707,200 @@
             position: relative;
             max-height: 90vh;
             overflow-y: auto;
+        }
+
+        .site-title-logo {
+            width: min(420px, 68vw);
+            height: auto;
+            display: block;
+        }
+
+        .header-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .fortune-fab {
+            width: 50px;
+            height: 50px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #fffdf7, #fff3c4);
+            color: #9a6a12;
+            border: 1px solid #e1bf62;
+            box-shadow: 0 4px 0 #d6a84f, 0 10px 18px rgba(180, 83, 9, 0.14);
+        }
+
+        .oracle-modal-card {
+            width: min(100%, 380px);
+            max-height: min(86dvh, 720px);
+            overflow-y: auto;
+            overscroll-behavior: contain;
+            padding-bottom: calc(20px + env(safe-area-inset-bottom));
+        }
+
+        .oracle-loading {
+            border-radius: 18px;
+            border: 1px solid #ead7a2;
+            background: linear-gradient(180deg, #fffdf6, #ffffff);
+            padding: 26px 22px;
+            text-align: center;
+            box-shadow: 0 6px 20px rgba(15, 23, 42, 0.08);
+        }
+
+        .oracle-loading-line {
+            width: 112px;
+            height: 3px;
+            margin: 18px auto 0;
+            border-radius: 999px;
+            background: linear-gradient(90deg, transparent, #b7791f, transparent);
+            animation: oraclePulse 1s ease-in-out infinite;
+        }
+
+        @keyframes oraclePulse {
+            0%, 100% { opacity: 0.25; transform: scaleX(0.62); }
+            50% { opacity: 1; transform: scaleX(1); }
+        }
+
+        .oracle-result-scroll {
+            max-height: min(62dvh, 520px);
+            overflow-y: auto;
+            padding-right: 2px;
+        }
+
+        .oracle-paper {
+            --oracle-ink: #064e3b;
+            --oracle-gold: #9a6a12;
+            position: relative;
+            overflow: hidden;
+            border-radius: 22px;
+            background: linear-gradient(180deg, #fffdf7, #fffefa 50%, #ffffff);
+            border: 1px solid #d4a634;
+            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08), inset 0 0 0 2px rgba(255,255,255,0.72);
+            color: var(--oracle-ink);
+        }
+
+        .oracle-paper::before {
+            content: "運";
+            position: absolute;
+            right: 18px;
+            top: 10px;
+            font-size: 76px;
+            line-height: 1;
+            font-weight: 900;
+            color: rgba(154, 106, 18, 0.10);
+            pointer-events: none;
+        }
+
+        .oracle-title-big {
+            font-size: 18px;
+            letter-spacing: .12em;
+            font-weight: 900;
+            color: #b7791f;
+        }
+
+        .oracle-field-label {
+            font-size: 12px;
+            letter-spacing: .08em;
+            font-weight: 900;
+            margin-bottom: 5px;
+            color: #9a6a12;
+        }
+
+        .oracle-chip {
+            border-radius: 14px;
+            background: rgba(255,255,255,0.78);
+            border: 1px solid #ecd08a;
+            padding: 12px;
+        }
+
+        .oracle-chip.feature {
+            background: linear-gradient(180deg, #fffaf0, rgba(255,255,255,0.82));
+        }
+
+        .oracle-value {
+            font-family: "Noto Serif TC", "Songti TC", "Kaiti TC", "KaiTi", serif;
+            font-size: 14px;
+            line-height: 1.58;
+            font-weight: 500;
+            color: #064e3b;
+        }
+
+        .oracle-line-title {
+            font-family: "Noto Serif TC", "Songti TC", "Kaiti TC", "KaiTi", serif;
+            color: #b7791f;
+            font-size: 15px;
+            line-height: 1.35;
+            font-weight: 900;
+            margin-bottom: 5px;
+        }
+
+        .oracle-line-body {
+            font-family: "Noto Serif TC", "Songti TC", "Kaiti TC", "KaiTi", serif;
+            color: #064e3b;
+            font-size: 14px;
+            line-height: 1.62;
+            font-weight: 500;
+        }
+
+        .oracle-verse-title {
+            font-family: "Noto Serif TC", "Songti TC", "Kaiti TC", "KaiTi", serif;
+            color: #b7791f;
+            font-size: 18px;
+            line-height: 1.35;
+            font-weight: 900;
+            margin-bottom: 8px;
+        }
+
+        .oracle-verse-body {
+            font-family: "Noto Serif TC", "Songti TC", "Kaiti TC", "KaiTi", serif;
+            color: #064e3b;
+            font-size: 14px;
+            line-height: 1.75;
+            font-weight: 500;
+        }
+
+        .oracle-note {
+            margin-top: 4px;
+            font-size: 11px;
+            line-height: 1.45;
+            font-weight: 800;
+            color: #a8a29e;
+        }
+
+        .oracle-gold-flourish {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 8px;
+            color: #b7791f;
+        }
+
+        .oracle-gold-flourish::before,
+        .oracle-gold-flourish::after {
+            content: "";
+            width: 42px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #d6a84f);
+        }
+
+        .oracle-gold-flourish::after {
+            background: linear-gradient(90deg, #d6a84f, transparent);
+        }
+
+        .oracle-seal-small {
+            display: inline-grid;
+            place-items: center;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 1px solid #d6a84f;
+            background: #fff8e1;
+            color: #9a6a12;
+            font-size: 12px;
+            font-weight: 900;
         }
 
         /* 日期與牌型對齊 */
@@ -813,6 +1008,75 @@
         .me-stat-card .value {
             font-size: 1.28rem;
             line-height: 1.05;
+        }
+
+        .me-fortune-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 16px;
+            background: linear-gradient(180deg, #ecfdf5, #ffffff);
+            border: 1px solid #d1fae5;
+            border-top: 4px solid #10b981;
+            box-shadow: 0 4px 0 #d1fae5, 0 12px 20px rgba(16, 185, 129, 0.08);
+            padding: 15px;
+        }
+
+        .me-fortune-card.bad {
+            background: linear-gradient(180deg, #fff1f2, #ffffff);
+            border-color: #fecdd3;
+            border-top-color: #dc2626;
+            box-shadow: 0 4px 0 #fecdd3, 0 12px 20px rgba(220, 38, 38, 0.08);
+        }
+
+        .fortune-meter {
+            height: 9px;
+            border-radius: 999px;
+            background: rgba(15, 23, 42, 0.08);
+            overflow: hidden;
+        }
+
+        .fortune-meter span {
+            display: block;
+            height: 100%;
+            border-radius: inherit;
+            background: linear-gradient(90deg, #10b981, #fbbf24);
+        }
+
+        .me-fortune-card.bad .fortune-meter span {
+            background: linear-gradient(90deg, #fb7185, #dc2626);
+        }
+
+        .fortune-recent-list {
+            display: flex;
+            gap: 7px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+        }
+
+        .fortune-score-pill {
+            min-width: 48px;
+            border-radius: 999px;
+            padding: 6px 9px;
+            text-align: center;
+            font-size: 12px;
+            line-height: 1;
+            font-weight: 900;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+            border: 1px solid rgba(16, 185, 129, 0.18);
+            background: rgba(236, 253, 245, 0.82);
+            color: #047857;
+        }
+
+        .fortune-score-pill.loss {
+            border-color: rgba(220, 38, 38, 0.18);
+            background: rgba(254, 242, 242, 0.92);
+            color: #dc2626;
+        }
+
+        .fortune-score-pill.neutral {
+            border-color: rgba(100, 116, 139, 0.16);
+            background: rgba(248, 250, 252, 0.9);
+            color: #64748b;
         }
 
         .section-tight {
@@ -1096,18 +1360,21 @@
         <header class="flex justify-between items-start mb-10 animate__animated animate__fadeInDown">
             <div>
                 <h1 class="text-5xl font-black tracking-tighter flex items-center gap-3">
-                    <span class="text-3xl">🀄</span>
-                    <span class="title-gradient">麻雀龍虎榜</span>
-                    <span class="text-3xl">🀄</span>
+                    <img src="site-title-logo.png" alt="麻雀龍虎榜" class="site-title-logo">
                 </h1>
                 <div class="flex items-center gap-2 mt-3">
                     <div id="statusDot" class="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-sm shadow-emerald-200"></div>
                     <p id="statusText" class="text-emerald-700 text-[11px] font-black uppercase tracking-widest">財源廣進中...</p>
                 </div>
             </div>
-            <button onclick="toggleInput()" class="btn-bone w-16 h-16 flex items-center justify-center text-2xl hover:scale-110 transition-transform shine-effect pulse-btn">
-                <i class="fa-solid fa-plus"></i>
-            </button>
+            <div class="header-actions">
+                <button onclick="toggleInput()" class="btn-bone w-16 h-16 flex items-center justify-center text-2xl hover:scale-110 transition-transform shine-effect pulse-btn" aria-label="新增戰局">
+                    <i class="fa-solid fa-plus"></i>
+                </button>
+                <button onclick="openOracleModal()" class="fortune-fab flex items-center justify-center text-lg hover:scale-110 transition-transform" aria-label="是日雀運">
+                    <i class="fa-solid fa-scroll"></i>
+                </button>
+            </div>
         </header>
 
         <!-- Navigation Tabs -->
@@ -1158,8 +1425,9 @@
             </select>
         </div>
     </div>
-            
+
             <div id="meSummary"></div>
+            <div id="meFortuneIndex"></div>
 
             <div class="space-y-3">
                 <h3 class="font-black text-lg text-emerald-700 px-1 flex items-center gap-2">
@@ -1312,6 +1580,64 @@
         </div>
     </div>
 
+    <!-- Modal: Daily Mahjong Oracle -->
+    <div id="oracleModal" class="fixed inset-0 bg-black/40 hidden flex items-center justify-center z-[66] backdrop-blur-sm p-4">
+        <div class="mj-card oracle-modal-card p-5 sm:p-6 animate__animated animate__zoomIn animate__faster gold-border relative">
+            <button type="button" onclick="closeOracleModal()" class="modal-close-btn">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div id="oracleFormBlock">
+                <h3 class="font-black text-xl text-center text-emerald-800 mb-2">是日雀運</h3>
+                <p class="text-center text-xs text-gray-400 font-black mb-5">輸入資料，誠心求一支開局籤。</p>
+
+                <div class="space-y-3">
+                    <div>
+                        <label class="text-[10px] font-black text-gray-400 uppercase ml-2">名字</label>
+                        <input id="oracleName" type="text" placeholder="例如 Yanyi" class="outline-none mt-2">
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="text-[10px] font-black text-gray-400 uppercase ml-2">生肖</label>
+                            <select id="oracleZodiac" class="outline-none mt-2">
+                                <option value="鼠">鼠</option>
+                                <option value="牛">牛</option>
+                                <option value="虎">虎</option>
+                                <option value="兔">兔</option>
+                                <option value="龍">龍</option>
+                                <option value="蛇">蛇</option>
+                                <option value="馬">馬</option>
+                                <option value="羊">羊</option>
+                                <option value="猴">猴</option>
+                                <option value="雞">雞</option>
+                                <option value="狗">狗</option>
+                                <option value="豬">豬</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-black text-gray-400 uppercase ml-2">打牌時間</label>
+                            <select id="oracleTime" class="outline-none mt-2">
+                                <option value="morning">早上局</option>
+                                <option value="afternoon">下午局</option>
+                                <option value="evening" selected>晚上局</option>
+                                <option value="late">深夜局</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button id="oracleDrawBtn" onclick="drawOracle()" class="w-full py-3.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-black shadow-lg transition-colors">
+                        誠心求籤
+                    </button>
+                </div>
+            </div>
+
+            <div id="oracleLoading" class="hidden oracle-loading">
+                <div class="text-[10px] font-black text-gray-400 tracking-widest">求籤中</div>
+                <div id="oracleLoadingText" class="text-lg font-black text-emerald-800 mt-2">請定心，等雀神翻牌</div>
+                <div class="oracle-loading-line"></div>
+            </div>
+            <div id="oracleResult" class="hidden"></div>
+        </div>
+    </div>
+
     <datalist id="locs"></datalist>
     <datalist id="allPlayersList"></datalist>
 
@@ -1330,6 +1656,343 @@
 
         function stableHash(input) {
             return String(input).split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+        }
+
+        const oracleLoadingLines = [
+            '誠心洗牌，正在感應發財位置。',
+            '正在翻查麻雀之神今日嘅更表。',
+            '感應緊你今日嘅摸牌手感。',
+            '係咪想贏先？誠心啲，幫你洗緊牌。',
+            '稍等，麻雀大神打緊牌。',
+            '稍等，麻雀大神正在批閱你嘅戰績。',
+            '運氣加載中，今日應該唔會輸牌掛。',
+            '正在同你感應邊張牌先係今日嘅靈魂。',
+            '牌局如人生，Loading 就如等上牌。',
+            '誠心求籤，今日睇下邊個係大水魚。',
+            '正在計算今日你自摸嘅機率。',
+            '求籤中，建議先去洗個手，唔好執牌。',
+            '媽呢媽呢空，摸親都係靚紅中。',
+            '運勢構建中，準備好清一色未？',
+            '正在掃描現場氣場，搵緊最弱雞嗰個。',
+            '氣運流轉，正在鎖定今日嘅發財位。',
+            '咪急，等大神幫你派份好牌。',
+            '求籤都要時間，好似食糊都要等摸。'
+        ];
+
+        const oracleFortunes = [
+            { label: '大吉', seal: '吉' },
+            { label: '中吉', seal: '吉' },
+            { label: '小吉', seal: '吉' },
+            { label: '吉', seal: '吉' },
+            { label: '中平', seal: '平' },
+            { label: '凶', seal: '凶' }
+        ];
+
+        const oracleVerseBank = {
+            大吉: [
+                '龍馬精神：今日你手氣旺到發光，摸牌好似磁石吸鐵，清一色自摸信手拈來。',
+                '萬事如意：起手已經叫糊，隨便打一隻都自摸，對家想截都截唔到，直衝大牌。',
+                '四海昇平：今日你係全場主角，莊家冧幾多都係你贏，對家只係負責供牌。',
+                '財源廣進：隨便摸張牌都係絕張，唔食糊都難，記得帶定大啲嘅銀包裝錢。'
+            ],
+            中吉: [
+                '穩如泰山：牌路平穩，雖然未必鋪鋪大，但密食當三番，慢慢磨死對家。',
+                '左右逢源：上家供牌下家餵牌，你只需要坐喺度等食糊，輕輕鬆鬆過一晚。',
+                '水到渠成：唔使急，等中章慢慢湊齊，最後關頭自摸一發，全場都要比錢。',
+                '步步高陞：越打越旺，下半場係你嘅天下，前半場輸咗嘅會加倍贏返。'
+            ],
+            小吉: [
+                '細水長流：冇大牌但有細糊，贏埋贏埋夠你聽日飲茶，算係有個交代。',
+                '逢凶化吉：起手牌爛到嘔，但摸下摸下竟然叫得，仲要比你食到糊。',
+                '偶有驚喜：平平淡淡入面突然黎個槓上自摸，今日驚喜位就係呢度。',
+                '收放自如：想食就食，想守就守，節奏係你度，不過大財就未必有。'
+            ],
+            吉: [
+                '平穩進步：普普通通一場局，贏輸都係一兩底，起碼唔會比人鋪鋪爆。',
+                '順風順水：雖然唔係大發，但起碼打得順手，冇乜壓力，純屬娛樂。',
+                '有求必應：叫邊張摸邊張，雖然只係雞糊，但贏在夠晒快，激死對家。',
+                '平安大吉：今日適合做陪打，贏少少當做運動，最緊要係唔好輸。'
+            ],
+            中平: [
+                '聽天由命：牌運一般，全靠技術補救，千祈唔好亂衝，守住個位就贏。',
+                '半鹹半淡：贏一鋪輸一鋪，整晚基本係度做白工，當係練習下疊牌。',
+                '平淡是福：冇大起大落，平平安安打完一局，今日勝在唔會比人當魚。',
+                '有驚無險：比人叫幾次大牌都無事，今日你個護盾幾厚，守到尾就得。'
+            ],
+            凶: [
+                '烏雲蓋頂：摸牌摸到一陣酸味，起手全部係卡窿，今日宜守不宜攻。',
+                '大意失荊州：牌路明明好靚，但衰在打錯一張牌，結果全場最輸係你。',
+                '上落不定：手氣好似過山車，一鋪贏一鋪輸，搞到心緒不寧，建議早抖。',
+                '四面楚歌：左右都叫緊糊，你仲喺度揀邊一門，今日最緊要係識得棄糊。',
+                '陰差陽錯：想叫二五萬，點知二五萬係晒對家度，今日同啲牌無緣。',
+                '劫數難逃：對家清一色都比你摸到張絕張出銃，建議早啲散場返屋企。',
+                '霉氣纏身：坐邊個位都係輸，換牌都冇用，不如專心負責叫外賣啦。',
+                '全軍覆沒：唔單止輸錢，仲要輸埋氣勢，今日你係全場最閃耀嘅水魚。'
+            ]
+        };
+
+        const oracleWealthBank = [
+            '坐東位：東風轉運，今日你係莊家剋星，專門破人連莊。',
+            '坐南位：南風送暖，適合慢慢磨，下半場先係你嘅主場。',
+            '坐西位：西位屬金，今日最宜「金」屋藏驕，收埋靚牌最後先出。',
+            '坐北位：北位冷靜，今日適合打防守戰，等對家自亂陣腳。',
+            '上家係水魚：今日財位喺你上家，佢出乜你食乜，餵到你飽。',
+            '下家係財神：專心睇住下家，佢今日係你嘅供牌專員。',
+            '對家送錢：今日財星喺你正前方，對家打咩你都有得碰。',
+            '自摸門位：今日你嘅自摸位好強，摸牌嗰下要用力，感受嗰股氣。',
+            '廁所對面：位雖臭但運旺，今日係「臭牌食大糊」，越爛越好運。',
+            '門口位：風生水起，今日最宜速戰速決，贏咗就即刻走人。',
+            '背靠牆位：有靠山，今日打牌底氣足，對家點嚇你都無用。',
+            '冷氣口位：冷靜位，今日最啱用腦打牌，分析牌路一估一個準。',
+            '右側大位：右手摸牌有加持，今日宜單吊，一摸即中。',
+            '左側吉位：左手撥牌轉運氣，今日適合打混一色，色色俱全。',
+            '玄關財位：起身行個圈再坐返低，保證財源滾滾黎。',
+            '電視對面：分心反而有奇效，無心插柳柳成蔭，雞糊都能成大牌。'
+        ];
+
+        const oracleRouteBank = [
+            '起手孤張多，先打么九牌。',
+            '對家打乜你跟乜，穩紮穩打唔會失。',
+            '今日宜守，聽牌都要睇清楚有無炸彈。',
+            '見牌就碰，亂佢牌路，等佢摸唔到靚牌。',
+            '清一色唔好強求，雜牌食糊先係皇道。',
+            '今日適合單吊，越怪嘅牌越容易摸。',
+            '對家連莊，記得死釘爛釘，唔好比佢過。',
+            '有槓就槓，轉下牌路，話唔定槓上開花。',
+            '今日忌貪大，三番起糊，有得食就食。',
+            '打牌要有霸氣，摸牌嗰下唔好手軟。',
+            '上家打乜你唔好跟，今日要有自己風格。',
+            '絕張唔好出，寧願唔聽牌都唔好出銃。',
+            '今日適合「亂打」，搞亂全場節奏你就贏。',
+            '先打熟張，等對家以為你冇牌聽，突襲佢。',
+            '有對就碰，今日走「對對糊」路線最旺。',
+            '牌路唔順就洗個手，返黎又係一條好漢。',
+            '今日宜攻，有牌就衝，唔好縮埋一角。',
+            '睇準下家張牌，佢要乜你就扣乜。',
+            '今日忌開槓，開親槓都係送牌比人食。',
+            '慢慢疊牌，唔好比人睇穿你想要邊張。',
+            '今日利「邊張」，一二叫三，摸親都係三。',
+            '唔好執牌，亂放先可以迷惑對手。',
+            '對家打生張，你就跟住打，保證無事。',
+            '今日適合打「平和」，平平凡凡贏佢幾底。',
+            '有大牌要深藏不露，臨門一腳先嚇死佢。'
+        ];
+
+        const oracleTimingBank = [
+            '開局前五巡：係整牌時間，唔好亂碰，打好個底先。',
+            '局中膠著：大家都唔出牌，呢個時候最啱突然轉聽。',
+            '尾段衝刺：剩返十幾張，係時候博一博，唔食就無。',
+            '連贏三鋪：氣勢正旺，呢鋪宜打大牌，一舉擊潰。',
+            '連輸三鋪：運勢低迷，呢鋪忌衝，食個雞糊轉下運。',
+            '對家連莊：係時候要團結對手，合力拉佢落台。',
+            '凌晨時分：體力下降，今日最啱速戰速決，唔好拖。',
+            '第一鋪牌：開門紅好重要，就算雞糊都要食咗先。',
+            '最後一鋪：絕殺時機，有大牌一定要博，無悔今晚。',
+            '換位之後：氣場新開，第一鋪通常好牌，唔好浪費。',
+            '食完大牌：氣運會跌，下一鋪要打得保守少少。',
+            '比人截糊：唔好心急，下一鋪通常會有好牌補償。',
+            '摸到花嗰陣：係轉運預兆，留意下一張摸乜。',
+            '大家靜晒：肯定有人聽緊大牌，呢個時候要醒水。',
+            '有人叫外賣：分心時機，係食糊嘅大好機會。',
+            '半場休息：洗個臉，將霉運洗走，後半場發威。',
+            '對家發牢騷：佢運氣差緊，呢個時候要趁火打劫。',
+            '摸到絕張：運氣頂峰，之後三鋪都要大膽進攻。',
+            '洗牌太嘈：大家都心急，你反而要慢落黎打。',
+            '有人出銃：氣場變動，留意下一個邊個旺。',
+            '摸到重覆牌：牌路重疊，今日宜走「對對糊」路線。',
+            '有人換位：風水輪流轉，把握機會搶攻。',
+            '聽牌太耐：唔好死等，有得轉聽就轉聽。',
+            '氣氛太好：唔好放鬆，放鬆就最易出銃。',
+            '全場最靜：決戰時刻，每一張牌都係關鍵。'
+        ];
+
+        const oracleGoodBank = [
+            '大聲叫自摸', '去洗手間洗手', '飲杯凍檸茶', '稱讚對家牌技', '慢吞吞出牌',
+            '穿紅內褲', '食飽至打', '保持微笑', '亂打孤張', '截人糊',
+            '連莊不放', '專心睇牌', '一摸即拍', '扮唔識打', '大口呼吸',
+            '起身伸懶腰', '換個坐姿', '叫大家快啲', '摸下牌袋', '心中念咒'
+        ];
+
+        const oracleAvoidBank = [
+            '執牌太整齊', '多說話分心', '亂開槓', '借錢比對家', '打生張',
+            '食死糊', '摸鼻', '嘆氣', '玩手機', '懷疑人生',
+            '睇人副牌', '太早聽牌', '猶豫不決', '輸咗發脾氣', '起身行黎行去',
+            '唱衰自己手牌', '教人打牌', '太過貪大', '唔睇對家牌', '洗牌太大力'
+        ];
+
+        const oracleFooterBank = [
+            '本籤文純屬娛樂，輸咗錢唔好搵我，搵你上家。',
+            '雀神今日放假，以上建議由人工智能神棍提供。',
+            '麻雀乃國粹，贏輸乃兵家常事，最緊要係有錢比。',
+            '此籤不代表絕對勝率，打牌始終要靠嗰七分技術。',
+            '如有雷同，純屬你今日真係咁黑，唔關本站事。',
+            '建議配合個人直覺使用，AI 唔知你對家咩料。',
+            '贏錢請低調，輸錢請檢討，唔好拆我哋招牌。',
+            '本網站不對任何因「是日雀運」導致嘅出銃負責。',
+            '今日運勢僅供參考，如果對家出千，本籤自動無效。',
+            '打牌最緊要開心，如果你輸到唔開心，請關掉本站。',
+            '本籤經由 138 萬場牌局大數據分析，但你可能係例外。',
+            '若發現籤文太寸，請自省是否今日真係太水魚。',
+            '玄學嘢，信則有不信則無，反正我係信咗。',
+            '請勿因籤文內容與牌友發生肢體衝突，和氣生財。',
+            '自摸係實力，出銃係命運，本籤只係幫你認命。',
+            '如有不適（例如連續出銃），請立即停止打牌並休息。',
+            '本籤有效期至你下一鋪食糊為止，過後請重新求籤。',
+            '最終解釋權歸麻雀大神所有，我只係個傳話嘅。',
+            '記得，牌品好，人品自然好，贏錢自然好。'
+        ];
+
+        let oracleDrawTimer = null;
+        const ORACLE_PREF_KEY = 'mj_oracle_recent';
+
+        function pickBySeed(list, seed, offset = 0) {
+            return list[Math.abs(seed + offset) % list.length];
+        }
+
+        function splitOracleLine(line) {
+            const parts = String(line || '').split(/[:：]/);
+            if (parts.length < 2) return { title: '', body: String(line || '') };
+            return {
+                title: parts.shift().trim(),
+                body: parts.join('：').trim()
+            };
+        }
+
+        function renderOracleLine(line) {
+            const { title, body } = splitOracleLine(line);
+            return `
+                ${title ? `<div class="oracle-line-title">${escapeHTML(title)}</div>` : ''}
+                <div class="oracle-line-body">${escapeHTML(body)}</div>
+            `;
+        }
+
+        function loadOraclePrefs() {
+            try {
+                return JSON.parse(localStorage.getItem(ORACLE_PREF_KEY) || '{}');
+            } catch (e) {
+                return {};
+            }
+        }
+
+        function applyOraclePrefs() {
+            const prefs = loadOraclePrefs();
+            if (prefs.name) document.getElementById('oracleName').value = prefs.name;
+            if (prefs.zodiac) document.getElementById('oracleZodiac').value = prefs.zodiac;
+            if (prefs.time) document.getElementById('oracleTime').value = prefs.time;
+        }
+
+        function saveOraclePrefs(name, zodiac, time) {
+            localStorage.setItem(ORACLE_PREF_KEY, JSON.stringify({ name, zodiac, time }));
+        }
+
+        function resetOracleModal() {
+            clearTimeout(oracleDrawTimer);
+            oracleDrawTimer = null;
+            document.getElementById('oracleFormBlock').classList.remove('hidden');
+            document.getElementById('oracleLoading').classList.add('hidden');
+            document.getElementById('oracleResult').classList.add('hidden');
+            document.getElementById('oracleResult').innerHTML = '';
+        }
+
+        function openOracleModal() {
+            resetOracleModal();
+            applyOraclePrefs();
+            document.getElementById('oracleModal').classList.remove('hidden');
+            document.getElementById('oracleName').focus();
+        }
+
+        function closeOracleModal() {
+            resetOracleModal();
+            document.getElementById('oracleModal').classList.add('hidden');
+        }
+
+        function drawOracle() {
+            const name = document.getElementById('oracleName').value.trim();
+            const zodiac = document.getElementById('oracleZodiac').value;
+            const time = document.getElementById('oracleTime').value;
+            if (!name) return alert('請先輸入名字');
+            saveOraclePrefs(name, zodiac, time);
+
+            clearTimeout(oracleDrawTimer);
+            document.getElementById('oracleFormBlock').classList.add('hidden');
+            document.getElementById('oracleResult').classList.add('hidden');
+            document.getElementById('oracleLoading').classList.remove('hidden');
+            document.getElementById('oracleLoadingText').textContent = oracleLoadingLines[Math.floor(Math.random() * oracleLoadingLines.length)];
+            document.querySelector('.oracle-modal-card').scrollTop = 0;
+
+            const today = new Date().toISOString().slice(0, 10);
+            const seed = stableHash(`${name}-${zodiac}-${time}-${today}`);
+            const fortune = pickBySeed(oracleFortunes, seed, 5);
+            const verse = pickBySeed(oracleVerseBank[fortune.label], seed, 11);
+            const { title: verseTitle, body: verseBody } = splitOracleLine(verse);
+            const wealthLine = pickBySeed(oracleWealthBank, seed, 17);
+            const routeLine = pickBySeed(oracleRouteBank, seed, 23);
+            const timingLine = pickBySeed(oracleTimingBank, seed, 29);
+            const adviceGood = pickBySeed(oracleGoodBank, seed, 31);
+            const adviceAvoid = pickBySeed(oracleAvoidBank, seed, 37);
+            const footerLine = pickBySeed(oracleFooterBank, seed, 43);
+
+            oracleDrawTimer = setTimeout(() => {
+                document.getElementById('oracleLoading').classList.add('hidden');
+                document.getElementById('oracleResult').innerHTML = `
+                    <div class="oracle-result-scroll animate__animated animate__fadeIn">
+                        <div class="oracle-paper p-5">
+                            <div class="relative z-[1] text-center mb-4">
+                                <div class="oracle-title-big">是日雀運</div>
+                                <div class="text-3xl font-black mt-1 text-emerald-800">${escapeHTML(fortune.label)}</div>
+                                <div class="text-xs font-black text-slate-400 mt-1">${escapeHTML(name)} · ${escapeHTML(zodiac)}</div>
+                                <div class="oracle-gold-flourish"><span class="oracle-seal-small">${escapeHTML(fortune.seal)}</span></div>
+                            </div>
+
+                            <div class="relative z-[1] border-y py-5 mb-4" style="border-color: #e1bf62">
+                                <div class="oracle-field-label text-center">籤文</div>
+                                <div class="text-center">
+                                    ${verseTitle ? `<div class="oracle-verse-title">${escapeHTML(verseTitle)}</div>` : ''}
+                                    <p class="oracle-verse-body">${escapeHTML(verseBody)}</p>
+                                </div>
+                            </div>
+
+                            <div class="relative z-[1] space-y-2 mb-4">
+                                <div class="oracle-chip feature">
+                                    <div class="oracle-field-label">財位</div>
+                                    <div class="oracle-value">${renderOracleLine(wealthLine)}</div>
+                                </div>
+                                <div class="oracle-chip">
+                                    <div class="oracle-field-label">牌路</div>
+                                    <div class="oracle-value">${renderOracleLine(routeLine)}</div>
+                                </div>
+                                <div class="oracle-chip">
+                                    <div class="oracle-field-label">時機</div>
+                                    <div class="oracle-value">${renderOracleLine(timingLine)}</div>
+                                </div>
+                                <div class="oracle-chip">
+                                    <div class="oracle-field-label">宜忌</div>
+                                    <div class="grid grid-cols-2 gap-2 mt-2">
+                                        <div class="rounded-lg px-3 py-2 font-black" style="background:#fffaf0;border:1px solid #ecd08a">
+                                            <div class="text-[9px] text-amber-700 font-black mb-1">宜</div>
+                                            <div class="text-sm text-emerald-900">${escapeHTML(adviceGood)}</div>
+                                        </div>
+                                        <div class="rounded-lg bg-stone-50 border border-stone-100 px-3 py-2 font-black text-stone-600">
+                                            <div class="text-[9px] text-stone-500 font-black mb-1">忌</div>
+                                            <div class="text-sm">${escapeHTML(adviceAvoid)}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="relative z-[1] mt-4 text-center text-[11px] leading-relaxed font-black text-stone-400">
+                                ${escapeHTML(footerLine)}
+                            </div>
+
+                            <button onclick="resetOracleModal(); document.getElementById('oracleName').focus();" class="relative z-[1] w-full mt-4 py-3 rounded-xl bg-white border border-amber-200 text-emerald-800 font-black">
+                                重新求籤
+                            </button>
+                        </div>
+                    </div>
+                `;
+                document.getElementById('oracleResult').classList.remove('hidden');
+                document.querySelector('.oracle-modal-card').scrollTop = 0;
+            }, 2000);
         }
 
         function getIdentityBand(stats) {
@@ -1544,6 +2207,52 @@
         function isCumulativeGameForPlayer(game, selectedPlayerLower, score) {
             return (selectedPlayerLower === DEFAULT_ME_NAME && game.date === '2024-04-27' && game.location === 'yanyi home') ||
                 (selectedPlayerLower === DEFAULT_ME_NAME && score === 1440);
+        }
+
+        function getFortuneProfile(recentScores) {
+            if (!recentScores.length) {
+                return {
+                    label: '雀運未開',
+                    desc: '最近五局未有足夠實戰紀錄',
+                    percent: 0,
+                    isBad: false,
+                    meta: '等待開局'
+                };
+            }
+            const sum = recentScores.reduce((acc, score) => acc + score, 0);
+            const wins = recentScores.filter(score => score > 0).length;
+            const losses = recentScores.filter(score => score < 0).length;
+            const avg = sum / recentScores.length;
+            const swing = Math.min(100, Math.round(Math.abs(avg) / 4 + Math.abs(sum) / 18 + (Math.max(wins, losses) / recentScores.length) * 35));
+            const percent = Math.max(8, Math.min(96, swing));
+
+            if (sum > 0) {
+                return {
+                    label: percent >= 72 ? '財神附體' : '小財入局',
+                    desc: `最近 ${recentScores.length} 局淨贏 ${formatSigned(sum)}`,
+                    percent,
+                    isBad: false,
+                    meta: `${wins}/${recentScores.length} 局見綠`
+                };
+            }
+
+            if (sum < 0) {
+                return {
+                    label: percent >= 72 ? '黑雲蓋頂' : '輸勢未散',
+                    desc: `最近 ${recentScores.length} 局淨輸 ${formatSigned(sum)}`,
+                    percent,
+                    isBad: true,
+                    meta: `${losses}/${recentScores.length} 局見紅`
+                };
+            }
+
+            return {
+                label: '風平浪靜',
+                desc: `最近 ${recentScores.length} 局剛好打和`,
+                percent: 50,
+                isBad: false,
+                meta: '輸贏打平'
+            };
         }
 
         let currentFanCategory = 'All';
@@ -1997,6 +2706,17 @@
     const winRate = validScores.length > 0 ? ((wins / validScores.length) * 100).toFixed(0) : 0;
     const highest = validScores.length > 0 ? Math.max(...validScores) : 0;
     const lowest = validScores.length > 0 ? Math.min(...validScores) : 0;
+    const recentScores = myData
+        .filter(g => g.players)
+        .map(g => {
+            const myKey = Object.keys(g.players).find(p => p.toLowerCase() === selectedPlayerLower);
+            if (!myKey) return null;
+            const score = g.players[myKey];
+            return isCumulativeGameForPlayer(g, selectedPlayerLower, score) ? null : score;
+        })
+        .filter(score => score !== null)
+        .slice(0, 5);
+    const fortuneProfile = getFortuneProfile(recentScores);
 
     const locEntries = Object.entries(locStats).sort((a, b) => b[1] - a[1]);
     const bestLoc = locEntries.find(([, score]) => score > 0) || null;
@@ -2034,6 +2754,27 @@
                     <div class="label text-gray-400 font-black uppercase tracking-widest">實戰局數</div>
                     <div class="value font-black text-emerald-800 font-mono">${validScores.length}</div>
                 </div>
+            </div>
+        </div>`;
+
+    document.getElementById('meFortuneIndex').innerHTML = `
+        <div class="me-fortune-card ${fortuneProfile.isBad ? 'bad' : ''} mt-3">
+            <div class="flex items-start justify-between gap-3 mb-3">
+                <div>
+                    <div class="text-[10px] font-black text-gray-400 uppercase tracking-widest">最近五局雀運</div>
+                    <div class="text-2xl font-black ${fortuneProfile.isBad ? 'text-red-700' : 'text-emerald-800'}">${escapeHTML(fortuneProfile.label)}</div>
+                    <div class="text-xs font-black text-gray-400 mt-1">${escapeHTML(fortuneProfile.desc)}</div>
+                </div>
+                <div class="text-right flex-shrink-0">
+                    <div class="text-3xl font-black font-mono ${fortuneProfile.isBad ? 'text-red-600' : 'text-emerald-700'}">${fortuneProfile.percent}%</div>
+                    <div class="text-[9px] font-black text-gray-400 uppercase tracking-widest">${escapeHTML(fortuneProfile.meta)}</div>
+                </div>
+            </div>
+            <div class="fortune-meter"><span style="width:${fortuneProfile.percent}%"></span></div>
+            <div class="fortune-recent-list" aria-label="最近五局戰績">
+                ${recentScores.length ? recentScores.map(score => `
+                    <span class="fortune-score-pill ${score < 0 ? 'loss' : score === 0 ? 'neutral' : ''}">${formatSigned(score)}</span>
+                `).join('') : '<span class="text-[11px] font-black text-gray-400">未有最近五局紀錄</span>'}
             </div>
         </div>`;
 
