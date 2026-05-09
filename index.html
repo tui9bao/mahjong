@@ -732,6 +732,17 @@
             box-shadow: 0 4px 0 #d6a84f, 0 10px 18px rgba(180, 83, 9, 0.14);
         }
 
+        .sync-status-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #f8fafc, #eef2ff);
+            color: #475569;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 2px 0 #cbd5e1, 0 6px 12px rgba(71, 85, 105, 0.10);
+            font-size: 12px;
+        }
+
         .oracle-modal-card {
             width: min(100%, 380px);
             max-height: min(86dvh, 720px);
@@ -1365,6 +1376,9 @@
                 <div class="flex items-center gap-2 mt-3">
                     <div id="statusDot" class="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-sm shadow-emerald-200"></div>
                     <p id="statusText" class="text-emerald-700 text-[11px] font-black uppercase tracking-widest">財源廣進中...</p>
+                    <button onclick="clearCacheAndSync()" class="sync-status-btn flex items-center justify-center hover:scale-110 transition-transform" aria-label="清除快取並重新同步" title="重新同步">
+                        <i class="fa-solid fa-arrows-rotate"></i>
+                    </button>
                 </div>
             </div>
             <div class="header-actions">
@@ -1372,7 +1386,7 @@
                     <i class="fa-solid fa-plus"></i>
                 </button>
                 <button onclick="openOracleModal()" class="fortune-fab flex items-center justify-center text-lg hover:scale-110 transition-transform" aria-label="是日雀運">
-                    <i class="fa-solid fa-scroll"></i>
+                    <i class="fa-solid fa-wand-sparkles"></i>
                 </button>
             </div>
         </header>
@@ -2066,10 +2080,37 @@
             usedTitles.add(chosen.t);
             return { ...chosen, band, trait };
         }
+        function toLocalDateString(dateLike = new Date()) {
+            const date = dateLike instanceof Date ? dateLike : new Date(dateLike);
+            if (Number.isNaN(date.getTime())) return '';
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        function normalizeGameDate(dateValue) {
+            if (!dateValue) return dateValue;
+            const raw = String(dateValue).trim();
+            if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) return raw;
+            if (/^\d{4}-\d{2}-\d{2}T/.test(raw)) return toLocalDateString(raw);
+
+            const slashMatch = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+            if (slashMatch) {
+                const [, first, second, year] = slashMatch;
+                const day = String(first).padStart(2, '0');
+                const month = String(second).padStart(2, '0');
+                return `${year}-${month}-${day}`;
+            }
+
+            const parsed = new Date(raw);
+            return Number.isNaN(parsed.getTime()) ? raw.split('T')[0] : toLocalDateString(parsed);
+        }
+
         function normalizeGameForCache(game) {
             return {
                 ...game,
-                date: game.date ? String(game.date).split('T')[0] : game.date,
+                date: normalizeGameDate(game.date),
                 location: game.location || '',
                 type: game.type || '廣東牌',
                 players: game.players || {}
@@ -2085,19 +2126,41 @@
             return [normalized.date, normalized.location, normalized.type, playerPart].join('::');
         }
 
+        function gameCoreSignature(game) {
+            const normalized = normalizeGameForCache(game);
+            const playerPart = Object.entries(normalized.players)
+                .sort(([a], [b]) => a.localeCompare(b))
+                .map(([name, score]) => `${name}:${Number(score)}`)
+                .join('|');
+            return [normalized.location, normalized.type, playerPart].join('::');
+        }
+
+        function dateDistanceDays(dateA, dateB) {
+            if (!dateA || !dateB) return Infinity;
+            const a = new Date(`${dateA}T00:00:00`);
+            const b = new Date(`${dateB}T00:00:00`);
+            if (Number.isNaN(a.getTime()) || Number.isNaN(b.getTime())) return Infinity;
+            return Math.abs(a - b) / 86400000;
+        }
+
         function mergeUniqueGames(primaryGames, fallbackGames = []) {
             const seen = new Set();
-            return [...primaryGames, ...fallbackGames].filter(game => {
+            const seenByCore = new Map();
+            return [...primaryGames, ...fallbackGames].map(normalizeGameForCache).filter(game => {
                 const sig = gameSignature(game);
                 if (seen.has(sig)) return false;
+                const coreSig = gameCoreSignature(game);
+                const existingDate = seenByCore.get(coreSig);
+                if (existingDate && dateDistanceDays(existingDate, game.date) <= 1) return false;
                 seen.add(sig);
+                seenByCore.set(coreSig, game.date);
                 return true;
             });
         }
 
         function getPendingGames() {
             try {
-                return JSON.parse(localStorage.getItem('mj_pending_games') || '[]');
+                return mergeUniqueGames(JSON.parse(localStorage.getItem('mj_pending_games') || '[]').map(normalizeGameForCache));
             } catch (e) {
                 return [];
             }
@@ -2134,13 +2197,14 @@
     const cachedData = localStorage.getItem('mj_games_cache');
     const cachedEmojis = localStorage.getItem('mj_emojis_cache');
 
-    if (cachedData && !skipCache) {
-        try {
-            // 如果冰箱有資料，先拿出來顯示，讓畫面秒開
-            games = JSON.parse(cachedData);
-            if (cachedEmojis) playerEmojis = { ...playerEmojis, ...JSON.parse(cachedEmojis) };
-            updateStatus("⚡ 正在快取預載", "bg-emerald-500");
-            renderAll(); 
+            if (cachedData && !skipCache) {
+                try {
+                    // 如果冰箱有資料，先拿出來顯示，讓畫面秒開
+                    games = mergeUniqueGames(JSON.parse(cachedData).map(normalizeGameForCache));
+                    localStorage.setItem('mj_games_cache', JSON.stringify(games));
+                    if (cachedEmojis) playerEmojis = { ...playerEmojis, ...JSON.parse(cachedEmojis) };
+                    updateStatus("⚡ 正在快取預載", "bg-emerald-500");
+                    renderAll(); 
         } catch (e) {
             console.error("讀取快取失敗", e);
         }
@@ -2177,6 +2241,16 @@
         }
     }
 }
+
+        function clearCacheAndSync() {
+            if (!confirm('只會清除本機快取，然後重新從 Google Sheet 同步；不會刪除正式紀錄。要繼續嗎？')) return;
+            localStorage.removeItem('mj_games_cache');
+            localStorage.removeItem('mj_pending_games');
+            games = [];
+            updateStatus("🔄 正在重新同步", "bg-blue-500 animate-pulse");
+            renderAll();
+            fetchGames({ skipCache: true });
+        }
 
         function escapeHTML(value) {
             return String(value ?? '').replace(/[&<>"']/g, ch => ({
@@ -2911,10 +2985,10 @@
         function toggleInput() { 
             document.getElementById('inputForm').classList.toggle('hidden'); 
             if(!document.getElementById('inputForm').classList.contains('hidden')) { 
-                document.getElementById('gDate').valueAsDate = new Date(); 
+                document.getElementById('gDate').value = toLocalDateString(); 
                 initP(); 
-                renderPlayerQuickSelect();
-                renderLocationQuickSelect();
+                renderPlayerQuickSelect(); 
+                renderLocationQuickSelect(); 
             } 
         }
 
