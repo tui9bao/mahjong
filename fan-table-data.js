@@ -360,6 +360,12 @@ window.FAN_TABLE = [
     "description": "平糊並且沒有番子牌和花牌；又名「大平糊」/「無字花大平」"
   },
   {
+    "category": "平糊/對對糊",
+    "name": "對對糊",
+    "points": "40",
+    "description": "胡牌時只有「刻子」及「一對眼」"
+  },
+  {
     "category": "刻",
     "name": "兩暗刻",
     "points": "3",
@@ -386,7 +392,7 @@ window.FAN_TABLE = [
   {
     "category": "刻",
     "name": "坎坎糊",
-    "points": "120",
+    "points": "150",
     "description": "門清自摸對對糊，沒有槓牌；等於自摸五暗刻"
   },
   {
